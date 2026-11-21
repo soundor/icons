@@ -72,7 +72,7 @@ skip them silently.
 | `packages/icons/test/soundor`         | Every icon rendered by the Soundor implementation in Soundor's test runtime        |
 | `tests/browser-consumer`              | Vite selects the browser implementation and tree-shakes                            |
 | `tests/soundor-consumer`              | The Soundor CLI selects the native implementation and tree-shakes                  |
-| `apps/website/tests`                  | The gallery in Chromium, desktop and mobile                                        |
+| `apps/website/tests`                  | The landing page and the icon browser in Chromium, desktop and mobile              |
 
 Update snapshots with `pnpm --filter @soundor/icons test -u` when a change to
 the output is intended, and say why in the pull request.

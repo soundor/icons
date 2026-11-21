@@ -1,4 +1,45 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import {
+  AdjustmentsHorizontal,
+  MusicalNote,
+  SpeakerWave,
+} from '@soundor/icons/heroicons';
+import {
+  type IconComponent,
+  AudioLines,
+  Disc3,
+  Headphones,
+  KeyboardMusic,
+  Mic,
+  Pause,
+  Play,
+  SlidersHorizontal,
+  Volume2,
+} from '@soundor/icons/lucide';
+import {
+  Album,
+  Equalizer,
+  GraphicEq,
+  Headphones as MaterialHeadphones,
+  Tune,
+} from '@soundor/icons/material';
+import {
+  Faders,
+  Metronome as PhosphorMetronome,
+  PianoKeys,
+  SpeakerHigh,
+  VinylRecord,
+  Waveform as PhosphorWaveform,
+} from '@soundor/icons/phosphor';
+import {
+  Adjustments,
+  Metronome,
+  Microphone,
+  Piano,
+  PlayerRecord,
+  PlayerSkipForward,
+  Waveform,
+} from '@soundor/icons/tabler';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import {
   CodeBlock,
   CodeBlockTab,
@@ -10,12 +51,12 @@ import {
 import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock.core';
 import { buttonVariants } from 'fumadocs-ui/components/ui/button';
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
+import { useState } from 'react';
 import { collections } from 'virtual:icon-collections';
 
-import { Gallery } from '../components/gallery/gallery';
 import { codeOptions, tsxHighlighter } from '../components/highlighter';
-import { layoutOptions } from '../layout-options';
+import { navLinks } from '../layout-options';
 
 export const Route = createFileRoute('/')({ component: Home });
 
@@ -52,6 +93,44 @@ const TOTAL = collections.reduce(
   0,
 );
 
+/** A sample from every collection, each opening in the browser. */
+const preview: readonly (readonly [string, string, IconComponent])[] = [
+  ['lucide', 'Play', Play],
+  ['tabler', 'PlayerSkipForward', PlayerSkipForward],
+  ['phosphor', 'Waveform', PhosphorWaveform],
+  ['material', 'GraphicEq', GraphicEq],
+  ['heroicons', 'SpeakerWave', SpeakerWave],
+  ['lucide', 'Pause', Pause],
+  ['tabler', 'Metronome', Metronome],
+  ['phosphor', 'Faders', Faders],
+  ['material', 'Tune', Tune],
+  ['heroicons', 'MusicalNote', MusicalNote],
+  ['lucide', 'Mic', Mic],
+  ['tabler', 'Waveform', Waveform],
+  ['phosphor', 'PianoKeys', PianoKeys],
+  ['material', 'Equalizer', Equalizer],
+  ['heroicons', 'AdjustmentsHorizontal', AdjustmentsHorizontal],
+  ['lucide', 'AudioLines', AudioLines],
+  ['tabler', 'Microphone', Microphone],
+  ['phosphor', 'SpeakerHigh', SpeakerHigh],
+  ['material', 'Album', Album],
+  ['lucide', 'SlidersHorizontal', SlidersHorizontal],
+  ['tabler', 'Piano', Piano],
+  ['phosphor', 'VinylRecord', VinylRecord],
+  ['material', 'Headphones', MaterialHeadphones],
+  ['lucide', 'Volume2', Volume2],
+  ['tabler', 'PlayerRecord', PlayerRecord],
+  ['phosphor', 'Metronome', PhosphorMetronome],
+  ['lucide', 'Headphones', Headphones],
+  ['tabler', 'Adjustments', Adjustments],
+  ['lucide', 'Disc3', Disc3],
+  ['lucide', 'KeyboardMusic', KeyboardMusic],
+];
+
+const titles: Readonly<Record<string, string>> = Object.fromEntries(
+  collections.map((collection) => [collection.id, collection.title]),
+);
+
 function Install({ className }: { readonly className?: string }) {
   return (
     <CodeBlockTabs defaultValue="pnpm" className={className}>
@@ -82,31 +161,58 @@ function Install({ className }: { readonly className?: string }) {
   );
 }
 
+function HeroSearch() {
+  const [text, setText] = useState('');
+  const navigate = useNavigate();
+  return (
+    <form
+      role="search"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const q = text.trim();
+        void navigate({ to: '/browse', search: q ? { q } : {} });
+      }}
+      className="relative mt-6 max-w-xl"
+    >
+      <label>
+        <span className="sr-only">Search icons</span>
+        <Search
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-fd-muted-foreground"
+        />
+        <input
+          type="search"
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          placeholder="Search play, volume, arrow left…"
+          autoComplete="off"
+          spellCheck={false}
+          className="h-12 w-full rounded-xl border bg-fd-card pr-28 pl-12 text-base shadow-sm outline-none placeholder:text-fd-muted-foreground focus-visible:ring-2 focus-visible:ring-fd-primary"
+        />
+      </label>
+      <button
+        type="submit"
+        className={buttonVariants({
+          variant: 'primary',
+          className: 'absolute top-1/2 right-1.5 -translate-y-1/2 px-3 py-1.5',
+        })}
+      >
+        Search
+      </button>
+    </form>
+  );
+}
+
 function Home() {
   return (
-    <HomeLayout
-      {...layoutOptions}
-      links={layoutOptions.links.map((link) =>
-        link.external
-          ? {
-              ...link,
-              text: (
-                <span className="inline-flex items-center gap-1">
-                  {link.text}
-                  <ExternalLink aria-hidden className="size-3" />
-                </span>
-              ),
-            }
-          : link,
-      )}
-    >
-      <main className="relative isolate w-full">
+    <HomeLayout {...navLinks}>
+      <div className="relative isolate w-full">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] [background-image:linear-gradient(to_right,var(--color-fd-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-fd-border)_1px,transparent_1px)] [background-size:48px_48px] opacity-50 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)]"
         />
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <section className="flex flex-col gap-4 pt-10 pb-4 sm:pt-14 lg:flex-row lg:items-end lg:justify-between">
+          <section className="grid gap-10 pt-12 pb-16 sm:pt-20 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-16">
             <div className="max-w-2xl">
               <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
                 Icons for{' '}
@@ -120,12 +226,79 @@ function Home() {
                 Soundor&apos;s native SVG in a plugin and with ordinary SVG in
                 the browser.
               </p>
+              <HeroSearch />
+              <Install className="mt-4 max-w-xl text-left" />
             </div>
-            <Install className="w-full max-w-sm text-left" />
+
+            <div className="lg:w-[420px]">
+              <ul
+                aria-label="A sample of the icons"
+                className="grid grid-cols-6 gap-1 rounded-2xl border bg-fd-card/60 p-3 backdrop-blur"
+              >
+                {preview.map(([collection, name, Icon]) => (
+                  <li key={`${collection}:${name}`}>
+                    <Link
+                      to="/browse"
+                      search={{ icon: `${collection}:${name}` }}
+                      title={`${name} · ${titles[collection]}`}
+                      aria-label={`${name}, ${titles[collection]}`}
+                      className="flex aspect-square items-center justify-center rounded-lg text-fd-foreground transition-colors hover:bg-fd-accent"
+                    >
+                      <Icon size={24} />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/browse"
+                className={buttonVariants({
+                  variant: 'outline',
+                  className: 'mt-3 w-full gap-1.5 py-2.5',
+                })}
+              >
+                Browse all {TOTAL.toLocaleString('en-US')} icons
+                <ArrowRight aria-hidden className="size-4" />
+              </Link>
+            </div>
           </section>
 
-          <section aria-label="Gallery" className="pb-20">
-            <Gallery />
+          <section aria-labelledby="collections" className="border-t py-16">
+            <p className="mb-2 font-mono text-xs tracking-wider text-fd-primary uppercase">
+              Collections
+            </p>
+            <h2
+              id="collections"
+              className="text-2xl font-semibold tracking-tight sm:text-3xl"
+            >
+              Five sets, every style
+            </h2>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              {collections.map((collection) => (
+                <Link
+                  key={collection.id}
+                  to="/browse"
+                  search={{ c: collection.id }}
+                  className="group rounded-xl border bg-fd-card p-4 transition-colors hover:bg-fd-accent"
+                >
+                  <p className="flex items-center justify-between font-medium">
+                    {collection.title}
+                    <ArrowRight
+                      aria-hidden
+                      className="size-4 opacity-0 transition-opacity group-hover:opacity-60"
+                    />
+                  </p>
+                  <p className="mt-1 text-xs text-fd-muted-foreground">
+                    {collection.description}
+                  </p>
+                  <p className="mt-3 text-xs text-fd-muted-foreground">
+                    {collection.total.toLocaleString('en-US')} icons ·{' '}
+                    {collection.variants.length}{' '}
+                    {collection.variants.length === 1 ? 'style' : 'styles'} ·{' '}
+                    {collection.license}
+                  </p>
+                </Link>
+              ))}
+            </div>
           </section>
 
           <section className="grid gap-10 border-t py-16 lg:grid-cols-[2fr_3fr] lg:items-start">
@@ -181,27 +354,57 @@ function Home() {
               codeblock={{ title: 'transport.tsx', className: 'my-0' }}
             />
           </section>
-
-          <section className="mb-20 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {collections.map((collection) => (
-              <a
-                key={collection.id}
-                href={collection.homepage}
-                className="rounded-xl border bg-fd-card p-4 transition-colors hover:bg-fd-accent"
-              >
-                <p className="font-medium">{collection.title}</p>
-                <p className="mt-1 text-xs text-fd-muted-foreground">
-                  {collection.description}
-                </p>
-                <p className="mt-3 text-xs text-fd-muted-foreground">
-                  {collection.total.toLocaleString('en-US')} icons ·{' '}
-                  {collection.license}
-                </p>
-              </a>
-            ))}
-          </section>
         </div>
-      </main>
+      </div>
+      <Footer />
     </HomeLayout>
+  );
+}
+
+function Footer() {
+  return (
+    <footer role="contentinfo" className="border-t">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-fd-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <p>
+          @soundor/icons is MIT licensed. Each icon keeps its collection&apos;s
+          license:{' '}
+          <Link
+            className="underline underline-offset-2 hover:text-fd-foreground"
+            to="/docs/$"
+            params={{ _splat: 'licensing' }}
+          >
+            licensing
+          </Link>
+          .
+        </p>
+        <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
+          <Link className="hover:text-fd-foreground" to="/browse">
+            Browse
+          </Link>
+          <Link
+            className="hover:text-fd-foreground"
+            to="/docs/$"
+            params={{ _splat: '' }}
+          >
+            Docs
+          </Link>
+          <a
+            className="hover:text-fd-foreground"
+            href="https://github.com/soundor/icons"
+          >
+            GitHub
+          </a>
+          <a
+            className="hover:text-fd-foreground"
+            href="https://components.soundor.dev/"
+          >
+            Components
+          </a>
+          <a className="hover:text-fd-foreground" href="https://soundor.dev/">
+            Soundor
+          </a>
+        </nav>
+      </div>
+    </footer>
   );
 }

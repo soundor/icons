@@ -1,7 +1,8 @@
 /**
  * The selected icon: a large preview with size, color and stroke width, its
  * variants, the code to copy (public imports only), and its license and
- * source. A side panel on wide screens, a bottom sheet on narrow ones.
+ * source. A column beside the grid on wide screens, a bottom sheet on narrow
+ * ones.
  */
 
 import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock.core';
@@ -10,6 +11,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CollectionInfo, IconModule } from 'virtual:icon-collections';
 
 import { codeOptions, tsxHighlighter } from '../highlighter';
+import { ColorPicker } from './color-picker';
 import { importSnippet, jsxSnippet, type Entry } from './search';
 
 export function Details({
@@ -60,7 +62,7 @@ export function Details({
     <aside
       aria-labelledby="icon-details"
       data-testid="details"
-      className="fixed inset-x-0 bottom-0 z-40 max-h-[80vh] overflow-y-auto rounded-t-2xl border bg-fd-background p-5 shadow-2xl lg:sticky lg:inset-x-auto lg:top-20 lg:bottom-auto lg:z-auto lg:mt-3 lg:max-h-[calc(100vh-6rem)] lg:self-start lg:rounded-2xl lg:shadow-none"
+      className="fixed inset-x-0 bottom-0 z-40 max-h-[80vh] overflow-y-auto rounded-t-2xl border bg-fd-background p-5 shadow-2xl lg:static lg:z-auto lg:max-h-none lg:w-[340px] lg:shrink-0 lg:rounded-none lg:border-0 lg:border-l lg:shadow-none"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -156,18 +158,7 @@ export function Details({
             onChange={setStrokeWidth}
           />
         )}
-        <label className="flex items-center justify-between gap-3 text-sm">
-          <span>Color</span>
-          <span className="flex items-center gap-2">
-            <code className="text-xs text-fd-muted-foreground">{color}</code>
-            <input
-              type="color"
-              value={color}
-              onChange={(event) => setColor(event.target.value)}
-              className="h-7 w-10 cursor-pointer rounded border bg-transparent"
-            />
-          </span>
-        </label>
+        <ColorPicker value={color} onChange={setColor} />
       </div>
 
       <div className="mt-4 grid gap-2">
@@ -235,7 +226,7 @@ function Range({
   readonly onChange: (value: number) => void;
 }) {
   return (
-    <label className="grid grid-cols-[6rem_1fr_3.5rem] items-center gap-3 text-sm">
+    <label className="grid grid-cols-[6rem_minmax(0,1fr)_3.5rem] items-center gap-3 text-sm">
       <span>{label}</span>
       <input
         type="range"
@@ -244,7 +235,7 @@ function Range({
         step={step}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="accent-fd-primary"
+        className="w-full accent-fd-primary"
       />
       <span className="text-right text-xs text-fd-muted-foreground tabular-nums">
         {value}

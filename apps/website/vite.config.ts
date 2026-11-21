@@ -20,7 +20,14 @@ export default defineConfig({
     tanstackStart({
       router: { basepath: base },
       pages: [{ path: '/search-index.json' }],
-      prerender: { enabled: true, crawlLinks: true, failOnError: true },
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+        failOnError: true,
+        // /browse?c=… and the like are one page: the gallery reads the URL in
+        // the browser.
+        filter: ({ path }) => !path.includes('?'),
+      },
     }),
     react(),
   ],

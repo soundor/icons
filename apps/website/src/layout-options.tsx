@@ -1,4 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import { ExternalLink } from 'lucide-react';
 
 // The repository's brand files, which the README shows too.
 import logoDark from '../../../assets/brand/soundor-icons-logo-dark-bg.svg?url';
@@ -26,6 +27,7 @@ export const layoutOptions = {
   },
   githubUrl: 'https://github.com/soundor/icons',
   links: [
+    { text: 'Browse', url: '/browse' },
     { text: 'Docs', url: '/docs' },
     {
       text: 'Components',
@@ -34,4 +36,22 @@ export const layoutOptions = {
     },
     { text: 'Soundor', url: 'https://soundor.dev/', external: true },
   ],
+} satisfies BaseLayoutProps;
+
+/** The options for the home layout pages, with external links marked. */
+export const navLinks = {
+  ...layoutOptions,
+  links: layoutOptions.links.map((link) =>
+    'external' in link
+      ? {
+          ...link,
+          text: (
+            <span className="inline-flex items-center gap-1">
+              {link.text}
+              <ExternalLink aria-hidden className="size-3" />
+            </span>
+          ),
+        }
+      : link,
+  ),
 } satisfies BaseLayoutProps;

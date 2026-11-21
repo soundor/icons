@@ -41,16 +41,17 @@ export function serveFile(
   request: IncomingMessage,
   response: ServerResponse,
 ): boolean {
-  const { pathname } = new URL(request.url ?? '/', 'http://localhost');
+  const { pathname, search } = new URL(request.url ?? '/', 'http://localhost');
   const file = fileFor(root, pathname);
   if (file === undefined) return false;
-  // As GitHub Pages: a folder without its slash is redirected to it.
+  // As GitHub Pages: a folder without its slash is redirected to it, with its
+  // query.
   if (
     file.endsWith(`${sep}index.html`) &&
     !pathname.endsWith('/') &&
     !pathname.endsWith('.html')
   ) {
-    response.writeHead(301, { location: `${pathname}/` }).end();
+    response.writeHead(301, { location: `${pathname}/${search}` }).end();
     return true;
   }
   response.writeHead(200, {

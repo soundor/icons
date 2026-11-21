@@ -14,12 +14,13 @@ export function useIconModules(): {
   const [modules, setModules] = useState<Record<string, IconModule>>({});
   const requested = useRef(new Set<string>());
   const mounted = useRef(true);
-  useEffect(
-    () => () => {
+  // Set on every mount: StrictMode runs the cleanup once before the real mount.
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
       mounted.current = false;
-    },
-    [],
-  );
+    };
+  }, []);
   const load = useCallback((subpath: string) => {
     if (requested.current.has(subpath)) return;
     const loader = loaders[subpath];

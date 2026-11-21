@@ -38,6 +38,9 @@ function Documentation() {
   return (
     <DocsLayout
       {...layoutOptions}
+      // The page tree lists the docs, starting with Getting started: a Docs
+      // link above it would repeat it.
+      links={layoutOptions.links.filter((link) => link.url !== '/docs')}
       tree={source.getPageTree()}
       sidebar={{ tabs: false }}
     >

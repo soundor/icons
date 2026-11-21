@@ -1,10 +1,11 @@
 /**
- * The grid of results, virtualized by row: only the rows on screen (and a
- * few around them) are mounted, so thousands of results cost a few hundred
- * SVG elements. Arrow keys, Home and End move between icons.
+ * The grid of results, in its own scroll area and virtualized by row: only
+ * the rows on screen (and a few around them) are mounted, so thousands of
+ * results cost a few hundred SVG elements. Arrow keys, Home and End move
+ * between icons.
  */
 
-import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { Check, Copy } from 'lucide-react';
 import {
   useEffect,
@@ -39,42 +40,32 @@ export function IconGrid({
   readonly selected?: string;
   readonly onSelect: (key: string) => void;
 }) {
+  const scroller = useRef<HTMLDivElement>(null);
   const container = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(6);
-  const [margin, setMargin] = useState(0);
   const [focus, setFocus] = useState(0);
   const pendingFocus = useRef<number | undefined>(undefined);
 
   useLayoutEffect(() => {
     const element = container.current;
     if (!element) return;
-    const measure = () => {
+    const measure = () =>
       setColumns(Math.max(2, Math.floor(element.clientWidth / CELL)));
-      setMargin(element.getBoundingClientRect().top + window.scrollY);
-    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
 
-  // The filters above the grid change height with the results (a variant
-  // row, a longer count): keep the grid's offset current.
-  useLayoutEffect(() => {
-    const element = container.current;
-    if (element)
-      setMargin(element.getBoundingClientRect().top + window.scrollY);
-  }, [results]);
-
   const rows = Math.ceil(results.length / columns);
   // TanStack Virtual returns fresh functions each render; this component is
   // not compiled by React Compiler, so nothing memoizes them.
   // oxlint-disable-next-line react/incompatible-library
-  const virtualizer = useWindowVirtualizer({
+  const virtualizer = useVirtualizer({
     count: rows,
+    getScrollElement: () => scroller.current,
     estimateSize: () => ROW,
     overscan: 3,
-    scrollMargin: margin,
   });
   const items = virtualizer.getVirtualItems();
 
@@ -89,7 +80,26 @@ export function IconGrid({
         load(subpathOf(results[index]!));
   }, [items, columns, results, load, subpathOf]);
 
-  useEffect(() => setFocus(0), [results]);
+  // New results keep the selected icon in view when they still have it, and
+  // start at the top when they do not. Selecting an icon is not new results.
+  const selection = useRef(selected);
+  useLayoutEffect(() => {
+    selection.current = selected;
+  }, [selected]);
+  useLayoutEffect(() => {
+    const index = results.findIndex((entry) => entry.key === selection.current);
+    if (index === -1) {
+      scroller.current?.scrollTo({ top: 0 });
+      setFocus(0);
+    } else {
+      setFocus(index);
+      virtualizer.scrollToIndex(Math.floor(index / columns), {
+        align: 'auto',
+      });
+    }
+    // Only new results move the grid: not a resize, and not a selection.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [results]);
 
   useEffect(() => {
     const index = pendingFocus.current;
@@ -124,48 +134,54 @@ export function IconGrid({
 
   return (
     <div
-      ref={container}
-      role="list"
-      aria-label="Icons"
-      onKeyDown={onKeyDown}
-      className="relative mt-2"
-      style={{ height: virtualizer.getTotalSize() }}
+      ref={scroller}
+      data-testid="grid-scroller"
+      className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-6 sm:px-4"
     >
-      {items.map((row) => (
-        <div
-          key={row.key}
-          className="absolute inset-x-0 grid"
-          style={{
-            top: row.start - virtualizer.options.scrollMargin,
-            height: ROW,
-            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-          }}
-        >
-          {results
-            .slice(row.index * columns, (row.index + 1) * columns)
-            .map((entry, column) => {
-              const index = row.index * columns + column;
-              return (
-                <Cell
-                  key={entry.key}
-                  entry={entry}
-                  index={index}
-                  subpath={subpathOf(entry)}
-                  module={modules[subpathOf(entry)]}
-                  collectionTitle={
-                    showCollection ? titles[entry.collection] : undefined
-                  }
-                  tabbable={index === focus}
-                  selected={entry.key === selected}
-                  onSelect={() => {
-                    setFocus(index);
-                    onSelect(entry.key);
-                  }}
-                />
-              );
-            })}
-        </div>
-      ))}
+      <div
+        ref={container}
+        role="list"
+        aria-label="Icons"
+        onKeyDown={onKeyDown}
+        className="relative"
+        style={{ height: virtualizer.getTotalSize() }}
+      >
+        {items.map((row) => (
+          <div
+            key={row.key}
+            className="absolute inset-x-0 grid"
+            style={{
+              top: row.start,
+              height: ROW,
+              gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+            }}
+          >
+            {results
+              .slice(row.index * columns, (row.index + 1) * columns)
+              .map((entry, column) => {
+                const index = row.index * columns + column;
+                return (
+                  <Cell
+                    key={entry.key}
+                    entry={entry}
+                    index={index}
+                    subpath={subpathOf(entry)}
+                    module={modules[subpathOf(entry)]}
+                    collectionTitle={
+                      showCollection ? titles[entry.collection] : undefined
+                    }
+                    tabbable={index === focus}
+                    selected={entry.key === selected}
+                    onSelect={() => {
+                      setFocus(index);
+                      onSelect(entry.key);
+                    }}
+                  />
+                );
+              })}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
