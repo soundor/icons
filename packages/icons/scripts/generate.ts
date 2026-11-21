@@ -4,7 +4,9 @@
  * package's build runs it; only the exports are committed.
  *
  * Against the previous output on disk, it reports the icons added and
- * removed: a removed or renamed icon is a breaking change.
+ * removed: a removed or renamed icon is a breaking change. With
+ * `--report <file>`, it also writes them there as JSON, for the "Icons
+ * changeset" workflow.
  *
  * The npm sources are the package's devDependencies, at the exact versions in
  * pnpm-workspace.yaml's catalog. Material Symbols is fetched from Git at the
@@ -120,3 +122,16 @@ if (removed.length > 0)
   );
 if (changed.some(([path]) => path === 'package.json'))
   console.warn('package.json exports changed: commit them.');
+
+const report = process.argv[process.argv.indexOf('--report') + 1];
+if (process.argv.includes('--report') && report !== undefined)
+  writeFileSync(
+    report,
+    JSON.stringify({
+      added: [...added].sort(),
+      removed: [...removed].sort(),
+      // Files other than the manifest: any change in an icon's drawing.
+      files: changed.filter(([path]) => path !== 'package.json').length,
+      exports: changed.some(([path]) => path === 'package.json'),
+    }),
+  );

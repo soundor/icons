@@ -46,8 +46,9 @@ changes them.
 ## Updating an upstream collection
 
 See [Updating upstream icons](https://icons.soundor.dev/docs/guides/updating-upstream):
-change the pinned version, run `pnpm generate`, read the icons it reports added
-and removed, and add a changeset. A removed or renamed icon is a breaking change.
+Dependabot updates the npm collections, and a workflow adds the changeset. By
+hand, change the pinned version, build, read the icons it reports added and
+removed, and add a changeset. A removed or renamed icon is a breaking change.
 
 ## Adding a collection
 

@@ -8,23 +8,26 @@ from them. Only the package's `exports` are committed.
 
 ## npm collections
 
-Lucide, Tabler, Phosphor and Heroicons:
+Lucide, Tabler, Phosphor and Heroicons are updated by Dependabot, in one pull
+request. The "Icons changeset" workflow generates the icons at the base and
+at the pull request, and commits the changeset: a major bump when icons are
+removed or renamed, a minor one when icons are added, a patch otherwise,
+with the icons listed. Read the list, then merge.
 
-1. Change the exact version in `pnpm-workspace.yaml`'s catalog, then run
-   `pnpm install`. The workspace waits two days before installing a new
-   release (`minimumReleaseAge`).
-2. Run `pnpm generate`. Against your previous build, it lists the icons
-   added and the icons removed or renamed. A removed or renamed icon is a
-   breaking change for anyone importing it.
-3. Commit any change to the `exports` of `packages/icons/package.json`: a new
-   or removed style.
-4. Add a changeset (`pnpm changeset`): a minor version for new icons, a major
-   one for removed or renamed icons.
+To update by hand, change the exact version in `pnpm-workspace.yaml`'s
+catalog, run `pnpm install`, then `pnpm build`. The build lists the icons
+added and the icons removed or renamed against your previous build. Add a
+changeset (`pnpm changeset`) with the bump to match. The workspace waits two
+days before installing a new release (`minimumReleaseAge`).
+
+If the update adds or removes a style, the build changes the `exports` of
+`packages/icons/package.json`: commit them. CI fails otherwise.
 
 ## Material Symbols
 
-Change `MATERIAL_COMMIT` in `packages/icons/scripts/sources/material.ts` to
-a commit of google/material-design-icons, and continue from step 2. The first
+Dependabot can't update it. Change `MATERIAL_COMMIT` in
+`packages/icons/scripts/sources/material.ts` to a commit of
+google/material-design-icons, build, and add a changeset as above. The first
 build after a change fetches the commit's tree and the needed files into
 `packages/icons/.cache/`, about 20 seconds; later builds reuse them.
 
