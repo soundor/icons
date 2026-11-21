@@ -4,26 +4,18 @@ name: Icons changeset
 # @phosphor-icons/core, heroicons); this workflow adds the changeset that
 # releases the result, so merging the pull request is enough.
 #
-#   report  generates the icons at the base and at the pull request's head,
-#           and turns the difference into a bump and a description. The head's
-#           dependencies run here, so the job holds no write access and no
-#           secret.
-#   commit  writes .changeset/icons-<number>.md and pushes it. It never runs
-#           code from the pull request: it only writes a file from `report`'s
-#           two outputs, which it checks first.
+# It generates the icons at the base and at the pull request's head, and turns
+# the difference into a bump and a description (packages/icons/scripts/
+# changeset.ts): major for removed or renamed icons, minor for added ones,
+# patch for any other change, no changeset when no icon changed. It commits
+# .changeset/icons-<number>.md to the Dependabot branch.
 #
-# `commit` pushes with ICONS_CHANGESET_TOKEN, a fine-grained token with
-# "Contents: read and write" on this repository (add it as an Actions secret
-# and as a Dependabot secret). A push with the workflow's own token would not
-# start the Verify checks on the new commit, and the required check would
-# never report. The push does not loop: this workflow runs for Dependabot's
-# pushes only.
-#
-# Dependabot stops rebasing a pull request that has someone else's commit:
-# `@dependabot recreate` makes a fresh one, which gets a fresh changeset.
+# The push uses the workflow's own token, so GitHub does not start the checks
+# on the new commit: re-run Verify on it before merging. `[dependabot skip]`
+# keeps Dependabot rebasing the pull request.
 
 on:
-  pull_request_target:
+  pull_request:
     branches: [main]
     # Where the sources' versions are pinned.
     paths: [pnpm-workspace.yaml]
@@ -35,61 +27,42 @@ concurrency:
 permissions: {}
 
 jobs:
-  report:
-    name: Report
-    if: github.actor == 'dependabot[bot]'
+  changeset:
+    name: Changeset
+    # Dependabot's own branches only: they hold no code of a contributor.
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
-    outputs:
-      bump: ${{ steps.changeset.outputs.bump }}
-      body: ${{ steps.changeset.outputs.body }}
+      contents: write # commit the changeset to the Dependabot branch
     steps:
-      # The base: trusted code, and the icons the pull request is compared to.
+      # The base first: the icons the pull request is compared to.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.sha }}
-          persist-credentials: true
       - uses: ./.github/actions/setup
       - run: pnpm generate
       # The head replaces the tracked files; the base's generated icons are
       # untracked, so the generator compares against them.
-      - name: Check out the pull request's head
+      - name: Check out the Dependabot branch
         env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           git fetch --depth=1 origin "$HEAD_SHA"
-          git checkout --detach "$HEAD_SHA"
+          git checkout -B "$BRANCH" "$HEAD_SHA"
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @soundor/icons generate --report "$RUNNER_TEMP/report.json"
       - id: changeset
         run: node packages/icons/scripts/changeset.ts "$RUNNER_TEMP/report.json" >> "$GITHUB_OUTPUT"
-
-  commit:
-    name: Commit
-    needs: report
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    env:
-      BUMP: ${{ needs.report.outputs.bump }}
-      BODY: ${{ needs.report.outputs.body }}
-      BRANCH: ${{ github.event.pull_request.head.ref }}
-      PR: ${{ github.event.pull_request.number }}
-    steps:
-      - name: Check the report
-        run: |
-          [[ "$BUMP" =~ ^(major|minor|patch|none)$ ]] || { echo "Unexpected bump: $BUMP"; exit 1; }
-          (( ${#BODY} < 8000 )) || { echo "The description is too long."; exit 1; }
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          token: ${{ secrets.ICONS_CHANGESET_TOKEN }}
-      - name: Write the changeset
+      - name: Commit the changeset
         env:
-          TOKEN: ${{ secrets.ICONS_CHANGESET_TOKEN }}
+          BUMP: ${{ steps.changeset.outputs.bump }}
+          BODY: ${{ steps.changeset.outputs.body }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          [[ -n "$TOKEN" ]] || { echo "ICONS_CHANGESET_TOKEN is not set: see the header of this workflow."; exit 1; }
           file=".changeset/icons-${PR}.md"
           if [[ "$BUMP" == none ]]; then
             rm -f "$file"
@@ -103,5 +76,5 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit --message 'chore: add a changeset for the icons update'
+          git commit --message 'chore: add a changeset for the icons update [dependabot skip]'
           git push origin "HEAD:refs/heads/${BRANCH}"
