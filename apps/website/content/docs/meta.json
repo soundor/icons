@@ -1,0 +1,13 @@
+{
+  "title": "Soundor Icons",
+  "pages": [
+    "index",
+    "collections",
+    "props",
+    "renderers",
+    "tree-shaking",
+    "licensing",
+    "---Maintaining---",
+    "...guides"
+  ]
+}

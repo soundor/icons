@@ -1,0 +1,27 @@
+{
+  "name": "soundor-icons-workspace",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --filter=@soundor/icons-website",
+    "generate": "pnpm --filter @soundor/icons generate",
+    "test": "turbo run test",
+    "test:integration": "turbo run test:integration",
+    "lint": "oxlint --deny-warnings .",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
+    "check": "pnpm format && pnpm lint && turbo run build test",
+    "version:packages": "changeset version && pnpm install --lockfile-only --no-frozen-lockfile",
+    "release": "changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "turbo": "catalog:"
+  },
+  "engines": {
+    "node": "^24.0.0"
+  },
+  "packageManager": "pnpm@12.15.0"
+}

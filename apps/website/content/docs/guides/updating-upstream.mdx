@@ -1,0 +1,36 @@
+---
+title: Updating upstream icons
+description: Move a collection to a new upstream version and review what changed.
+---
+
+Upstream versions are pinned, and the package's build generates the icons
+from them. Only the package's `exports` are committed.
+
+## npm collections
+
+Lucide, Tabler, Phosphor and Heroicons:
+
+1. Change the exact version in `pnpm-workspace.yaml`'s catalog, then run
+   `pnpm install`. The workspace waits two days before installing a new
+   release (`minimumReleaseAge`).
+2. Run `pnpm generate`. Against your previous build, it lists the icons
+   added and the icons removed or renamed. A removed or renamed icon is a
+   breaking change for anyone importing it.
+3. Commit any change to the `exports` of `packages/icons/package.json`: a new
+   or removed style.
+4. Add a changeset (`pnpm changeset`): a minor version for new icons, a major
+   one for removed or renamed icons.
+
+## Material Symbols
+
+Change `MATERIAL_COMMIT` in `packages/icons/scripts/sources/material.ts` to
+a commit of google/material-design-icons, and continue from step 2. The first
+build after a change fetches the commit's tree and the needed files into
+`packages/icons/.cache/`, about 20 seconds; later builds reuse them.
+
+## Checks
+
+The build fails on any icon it can't convert. CI also fails when the build
+changes the committed `exports`. If generation fails on an icon, see
+[Adding a collection](/docs/guides/adding-a-collection) for what to do instead
+of skipping it.

@@ -1,0 +1,46 @@
+---
+title: Adding a collection
+description: A source adapter and a configuration entry; the generator does the rest.
+---
+
+The generator (`packages/icons/scripts/`) is generic. A collection is:
+
+1. **A source adapter** in `scripts/sources/<id>.ts`. It reads the pinned
+   upstream files and returns a `LoadedSource`: the version, a pinned origin
+   (`npm:<package>@<version>` or `git:<url>#<commit>`), the license text, and
+   the icons of each variant as `{ name, svg, tags?, categories? }`.
+2. **An entry** in `scripts/collections.ts`: id, title, homepage, SPDX
+   license, the license file's name, and the variants with their subpath,
+   default size and whether they are stroked.
+
+Then:
+
+```sh
+pnpm generate
+pnpm check
+```
+
+The generator writes the modules, the package's `exports`, the license file,
+the notices, the provenance and the website's catalog. The gallery and the
+tests pick the new collection up from them. Commit the new `exports`; the
+rest is build output.
+
+## Before you add one
+
+- **License.** Read the upstream license and confirm it allows
+  redistribution and modification. Leave out a source whose terms are unclear,
+  and record why.
+- **Pinning.** For an npm source, add the package to `pnpm-workspace.yaml`'s
+  catalog at an exact version and to `packages/icons`' devDependencies. For a
+  Git source, pin a commit and fetch only the files you need (see
+  `sources/material.ts`).
+- **Paint.** Icons must paint with `currentColor` (or leave fill unset, with
+  `rootDefaults`), so that `color` works. A multicolor collection would need a
+  different props design.
+- **Variants.** Give each style a subpath. Keep export names the same across
+  a collection's styles.
+
+If an icon uses something Soundor can't draw, generation fails and names it.
+Don't work around that by dropping the icon or approximating it. Find out
+whether a faithful conversion exists, and add it to `scripts/lib/normalize.ts`
+with a test and a note in `NOTES`, or report the icons as unsupported.

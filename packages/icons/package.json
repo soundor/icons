@@ -1,0 +1,172 @@
+{
+  "name": "@soundor/icons",
+  "version": "0.0.0",
+  "description": "Lucide, Tabler, Phosphor, Heroicons and Material Symbols as React components for Soundor plugins and the browser.",
+  "keywords": [
+    "heroicons",
+    "icons",
+    "lucide",
+    "material-symbols",
+    "phosphor",
+    "react",
+    "soundor",
+    "svg",
+    "tabler"
+  ],
+  "homepage": "https://icons.soundor.dev",
+  "license": "MIT AND ISC AND Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soundor/icons.git",
+    "directory": "packages/icons"
+  },
+  "files": [
+    "dist",
+    "generated",
+    "licenses",
+    "CHANGELOG.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./lucide": {
+      "types": "./generated/lucide/index.d.ts",
+      "soundor": "./generated/lucide/soundor.js",
+      "default": "./generated/lucide/web.js"
+    },
+    "./tabler": {
+      "types": "./generated/tabler/index.d.ts",
+      "soundor": "./generated/tabler/soundor.js",
+      "default": "./generated/tabler/web.js"
+    },
+    "./tabler/filled": {
+      "types": "./generated/tabler/filled/index.d.ts",
+      "soundor": "./generated/tabler/filled/soundor.js",
+      "default": "./generated/tabler/filled/web.js"
+    },
+    "./phosphor": {
+      "types": "./generated/phosphor/index.d.ts",
+      "soundor": "./generated/phosphor/soundor.js",
+      "default": "./generated/phosphor/web.js"
+    },
+    "./phosphor/thin": {
+      "types": "./generated/phosphor/thin/index.d.ts",
+      "soundor": "./generated/phosphor/thin/soundor.js",
+      "default": "./generated/phosphor/thin/web.js"
+    },
+    "./phosphor/light": {
+      "types": "./generated/phosphor/light/index.d.ts",
+      "soundor": "./generated/phosphor/light/soundor.js",
+      "default": "./generated/phosphor/light/web.js"
+    },
+    "./phosphor/bold": {
+      "types": "./generated/phosphor/bold/index.d.ts",
+      "soundor": "./generated/phosphor/bold/soundor.js",
+      "default": "./generated/phosphor/bold/web.js"
+    },
+    "./phosphor/fill": {
+      "types": "./generated/phosphor/fill/index.d.ts",
+      "soundor": "./generated/phosphor/fill/soundor.js",
+      "default": "./generated/phosphor/fill/web.js"
+    },
+    "./phosphor/duotone": {
+      "types": "./generated/phosphor/duotone/index.d.ts",
+      "soundor": "./generated/phosphor/duotone/soundor.js",
+      "default": "./generated/phosphor/duotone/web.js"
+    },
+    "./heroicons": {
+      "types": "./generated/heroicons/index.d.ts",
+      "soundor": "./generated/heroicons/soundor.js",
+      "default": "./generated/heroicons/web.js"
+    },
+    "./heroicons/solid": {
+      "types": "./generated/heroicons/solid/index.d.ts",
+      "soundor": "./generated/heroicons/solid/soundor.js",
+      "default": "./generated/heroicons/solid/web.js"
+    },
+    "./heroicons/mini": {
+      "types": "./generated/heroicons/mini/index.d.ts",
+      "soundor": "./generated/heroicons/mini/soundor.js",
+      "default": "./generated/heroicons/mini/web.js"
+    },
+    "./heroicons/micro": {
+      "types": "./generated/heroicons/micro/index.d.ts",
+      "soundor": "./generated/heroicons/micro/soundor.js",
+      "default": "./generated/heroicons/micro/web.js"
+    },
+    "./material": {
+      "types": "./generated/material/index.d.ts",
+      "soundor": "./generated/material/soundor.js",
+      "default": "./generated/material/web.js"
+    },
+    "./material/filled": {
+      "types": "./generated/material/filled/index.d.ts",
+      "soundor": "./generated/material/filled/soundor.js",
+      "default": "./generated/material/filled/web.js"
+    },
+    "./material/rounded": {
+      "types": "./generated/material/rounded/index.d.ts",
+      "soundor": "./generated/material/rounded/soundor.js",
+      "default": "./generated/material/rounded/web.js"
+    },
+    "./material/rounded/filled": {
+      "types": "./generated/material/rounded/filled/index.d.ts",
+      "soundor": "./generated/material/rounded/filled/soundor.js",
+      "default": "./generated/material/rounded/filled/web.js"
+    },
+    "./material/sharp": {
+      "types": "./generated/material/sharp/index.d.ts",
+      "soundor": "./generated/material/sharp/soundor.js",
+      "default": "./generated/material/sharp/web.js"
+    },
+    "./material/sharp/filled": {
+      "types": "./generated/material/sharp/filled/index.d.ts",
+      "soundor": "./generated/material/sharp/filled/soundor.js",
+      "default": "./generated/material/sharp/filled/web.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "node scripts/generate.ts && tsdown --clean && tsc -b",
+    "dev": "tsdown --watch",
+    "generate": "node scripts/generate.ts",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
+  },
+  "devDependencies": {
+    "@phosphor-icons/core": "catalog:",
+    "@soundor/environment": "catalog:",
+    "@soundor/react": "catalog:",
+    "@soundor/test-runtime": "catalog:",
+    "@soundor/testing-library": "catalog:",
+    "@soundor/vitest": "catalog:",
+    "@tabler/icons": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "heroicons": "catalog:",
+    "lucide-static": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "saxes": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vitest-environment-soundor": "catalog:"
+  },
+  "peerDependencies": {
+    "@soundor/react": "^0.19.0",
+    "react": "^19.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@soundor/react": {
+      "optional": true
+    }
+  }
+}

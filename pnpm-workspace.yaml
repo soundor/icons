@@ -1,0 +1,77 @@
+packages:
+  - apps/*
+  - packages/*
+  - tests/*
+
+catalog:
+  '@changesets/cli': ^3.0.3
+  '@playwright/test': 1.65.1
+  '@soundor/config': ^0.19.0
+  '@soundor/environment': ^0.19.0
+  '@soundor/react': ^0.19.0
+  '@soundor/test-runtime': ^0.19.0
+  '@soundor/testing-library': ^0.19.0
+  '@soundor/vitest': ^0.19.0
+  '@soundor/web-runtime': ^0.15.0
+  '@tailwindcss/vite': ^4.3.5
+  '@tanstack/react-router': 1.170.46
+  '@tanstack/react-start': 1.169.5
+  '@tanstack/react-virtual': ^3.14.26
+  '@types/mdx': ^2.0.13
+  '@types/node': ^24.19.2
+  '@types/react': ^19.3.0
+  '@types/react-dom': ^19.3.0
+  '@vitejs/plugin-react': ^6.2.1
+  fumadocs-core: ^16.17.7
+  fumadocs-mdx: ^15.4.9
+  fumadocs-ui: npm:@fumadocs/base-ui@^16.17.7
+  lucide-react: ^1.70.0
+  oxfmt: ^0.79.0
+  oxlint: ^1.92.0
+  react: ^19.3.1
+  react-dom: ^19.3.1
+  saxes: ^6.0.0
+  shiki: ^4.6.0
+  soundor: ^0.19.0
+  tailwindcss: ^4.3.5
+  tsdown: ^0.23.7
+  turbo: ^2.11.10
+  typescript: ^7.0.2
+  vite: ^8.3.6
+  vitest: ^5.1.0
+  vitest-environment-soundor: ^0.19.0
+  # Upstream icon sources, pinned exactly: the generator records these
+  # versions in generated/provenance.json and the package's licenses/.
+  # Material Symbols comes from its Git repository, pinned in
+  # packages/icons/scripts/collections.ts.
+  '@phosphor-icons/core': 2.1.1
+  '@tabler/icons': 3.52.0
+  heroicons: 2.2.0
+  lucide-static: 1.75.0
+
+catalogMode: strict
+engineStrict: true
+minimumReleaseAge: 2880
+# The Soundor 0.19 release is the compatibility target for the initial release.
+minimumReleaseAgeExclude:
+  - '@soundor/config@0.19.0'
+  - '@soundor/core@0.19.0'
+  - '@soundor/devtools-client@0.19.0'
+  - '@soundor/devtools-protocol@0.19.0'
+  - '@soundor/devtools-server@0.19.0'
+  - '@soundor/driver@0.19.0'
+  - '@soundor/engine@0.10.0'
+  - '@soundor/environment@0.19.0'
+  - '@soundor/expression@0.19.0'
+  - '@soundor/react@0.19.0'
+  - '@soundor/runtime-sdk@0.19.0'
+  - '@soundor/test-runtime@0.19.0'
+  - '@soundor/testing-library@0.19.0'
+  - '@soundor/vitest@0.19.0'
+  - '@soundor/web-runtime@0.15.0'
+  - 'soundor@0.19.0'
+  - 'vitest-environment-soundor@0.19.0'
+autoInstallPeers: false
+strictPeerDependencies: true
+allowBuilds:
+  esbuild: false

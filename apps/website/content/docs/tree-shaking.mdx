@@ -1,0 +1,37 @@
+---
+title: Bundle size
+description: Only the icons you import are bundled, in Soundor and in the browser.
+---
+
+The package has more than 40,000 icons, and an app pays only for those it
+imports.
+
+- Each icon is a named export and a pure call (`/* @__PURE__ */ createIcon(…)`),
+  so a bundler drops the icons nobody imports, and their geometry with them.
+- The package is ESM with `"sideEffects": false`. Nothing runs when a module
+  loads: there is no registry and no initialization.
+- Each style is a module of its own, so importing from `lucide` never reads
+  Tabler. There is no root export.
+- Upstream icon packages are not dependencies. Their geometry is in the
+  generated modules.
+
+## Measured
+
+`tests/` builds the same file, six icons from five collections, with the
+Soundor CLI and with Vite. Minified, gzip in parentheses:
+
+| Build                           | Without icons   | With six icons  | Icons cost   |
+| ------------------------------- | --------------- | --------------- | ------------ |
+| `soundor build web` (UI bundle) | 160.8 kB (49.9) | 165.8 kB (51.8) | 5.0 kB (1.9) |
+| `vite build`                    | 219.5 kB (68.6) | 223.7 kB (70.4) | 4.2 kB (1.9) |
+
+The cost includes the renderer (`createIcon`, about 1 kB) and, in Soundor, the
+SVG primitives of `@soundor/react/svg`. Each icon after that costs its path
+data. The integration tests fail if an icon that wasn't imported appears in
+either bundle.
+
+## Development servers
+
+In development, Vite pre-bundles the package and loads a whole style module,
+up to 2 MB for a Material Symbols style, once. Production builds keep only
+what you import.

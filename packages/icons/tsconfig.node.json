@@ -1,0 +1,21 @@
+{
+  // The generator and the tests, which run in Node.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "lib": ["es2023", "DOM"],
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
+  },
+  "include": [
+    "scripts",
+    "src/model.ts",
+    "test/node",
+    "test/shared",
+    "tsdown.config.ts",
+    "vitest.config.ts"
+  ]
+}

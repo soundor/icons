@@ -1,0 +1,59 @@
+name: Verify
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      # The website's end-to-end tests run in Chromium.
+      - run: pnpm --filter @soundor/icons-website exec playwright install --with-deps chromium
+      - run: pnpm check
+      # The build generates the icons and package.json's exports: the
+      # committed exports must be what it generates.
+      - name: The build changes no committed file
+        run: git diff --exit-code
+      - name: Pack, and report the package's size
+        run: |
+          pnpm --filter @soundor/icons pack --pack-destination "$RUNNER_TEMP"
+          ls -l "$RUNNER_TEMP"/*.tgz >> "$GITHUB_STEP_SUMMARY"
+
+  integration:
+    name: Soundor integration
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          rust: 'true'
+      # A plugin built with the Soundor CLI (`soundor build web`): its UI
+      # bundle must hold the Soundor implementation of the imported icons only.
+      - run: pnpm test:integration
+
+  # The one check to require in branch protection: it passes only when every
+  # job above passed, so new jobs need no settings change, only this list.
+  verify:
+    name: Verify
+    if: always()
+    needs: [check, integration]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Every job passed
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          echo "$RESULTS"
+          jq -e 'all(. == "success")' <<< "$RESULTS"
