@@ -1,0 +1,58 @@
+---
+title: Licensing
+description: Each collection's license, what it asks of you, and where the package keeps the notices.
+---
+
+Soundor Icons' own code is under the MIT license: the renderers in `dist/`,
+the generator and this website. The icons are artwork from five independent
+projects, and each stays under its own license. The MIT license does not cover
+them.
+
+| Collection       | License                         | Copyright                                           | Version                                        |
+| ---------------- | ------------------------------- | --------------------------------------------------- | ---------------------------------------------- |
+| Lucide           | ISC; icons from Feather are MIT | Lucide Icons and Contributors; Cole Bemis (Feather) | lucide-static 1.75.0                           |
+| Tabler           | MIT                             | Paweł Kuna                                          | @tabler/icons 3.52.0                           |
+| Phosphor         | MIT                             | Phosphor Icons                                      | @phosphor-icons/core 2.1.1                     |
+| Heroicons        | MIT                             | Tailwind Labs, Inc.                                 | heroicons 2.2.0                                |
+| Material Symbols | Apache-2.0                      | Google                                              | google/material-design-icons, commit `10ecc14` |
+
+The package's `license` field reads `MIT AND ISC AND Apache-2.0`: using the
+package means using all of them.
+
+## In the package
+
+The npm package carries everything the licenses ask to be distributed:
+
+- `licenses/`: each collection's license file, verbatim from the version it
+  was generated from. `lucide.txt` includes Feather's MIT notice and the list
+  of icons it covers.
+- `THIRD_PARTY_NOTICES.md`: which collection comes from where, under which
+  license.
+- `generated/provenance.json`: exact sources, versions and every change the
+  conversion made.
+- A header on every generated module that names its source and its license
+  file, and says the file was converted from the upstream SVG files.
+
+## What the licenses ask of you
+
+All five allow use, modification and redistribution, including commercially.
+
+- **ISC and MIT** (Lucide, Feather, Tabler, Phosphor, Heroicons): keep the
+  copyright and license notice with copies of the artwork. A plugin bundle is
+  a copy. Include the notices of the collections you use with your product,
+  for example in its about box or documentation, as you would for any MIT
+  dependency.
+- **Apache-2.0** (Material Symbols): include a copy of the license, keep the
+  attribution notices, and mark modified files. The generated modules are
+  converted from Google's SVG files, and their headers say so. Google's
+  repository has no `NOTICE` file, so there's no NOTICE text to carry over.
+  The Apache license grants no trademark rights to Google's marks.
+
+This page is a summary, not legal advice. The license texts in `licenses/`
+govern.
+
+## Conversion
+
+The generator keeps each icon's geometry and changes its format, from SVG to
+JavaScript. The derived modules are under the same license as the icons they
+come from.

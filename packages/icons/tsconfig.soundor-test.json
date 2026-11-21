@@ -1,0 +1,15 @@
+{
+  // The Soundor tests, which run in Soundor's test runtime: the soundor
+  // condition, Soundor's runtime types and no DOM.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "lib": ["es2023"],
+    "customConditions": ["soundor"],
+    "types": ["@soundor/environment"],
+    "resolveJsonModule": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.soundor-test.tsbuildinfo"
+  },
+  "include": ["test/soundor", "test/shared"]
+}

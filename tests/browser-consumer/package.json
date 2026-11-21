@@ -1,0 +1,21 @@
+{
+  "name": "@soundor/icons-browser-consumer",
+  "private": true,
+  "description": "A Vite app importing @soundor/icons with the same imports as the Soundor consumer: its bundle must hold the browser implementation of the imported icons only.",
+  "type": "module",
+  "scripts": {
+    "test": "vite build && vitest run"
+  },
+  "dependencies": {
+    "@soundor/icons": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

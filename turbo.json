@@ -1,0 +1,31 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "globalDependencies": ["tsconfig.base.json"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "@soundor/icons-website#build": {
+      "dependsOn": ["^build"],
+      "env": ["SITE_BASE_PATH"],
+      "outputs": ["dist/**"]
+    },
+    "@soundor/icons-website#test": {
+      "dependsOn": ["build"],
+      "passThroughEnv": ["PLAYWRIGHT_BROWSERS_PATH", "CI"]
+    },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "cache": false
+    }
+  }
+}

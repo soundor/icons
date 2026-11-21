@@ -1,0 +1,9 @@
+{
+  "ignorePatterns": [
+    "**/routeTree.gen.ts",
+    "**/.source/**",
+    "**/.soundor/**",
+    "packages/icons/generated/**"
+  ],
+  "plugins": ["react", "typescript"]
+}
