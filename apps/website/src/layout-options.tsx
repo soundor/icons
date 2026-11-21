@@ -29,8 +29,7 @@ export const layoutOptions = {
   links: [
     { text: 'Browse', url: '/browse' },
     { text: 'Docs', url: '/docs' },
-    // In the header only: the sidebar lists the page itself, last.
-    { text: 'Changelog', url: '/docs/changelog', on: 'nav' },
+    { text: 'Changelog', url: '/docs/changelog' },
     {
       text: 'Components',
       url: 'https://components.soundor.dev/',
