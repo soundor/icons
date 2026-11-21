@@ -1,0 +1,87 @@
+---
+title: Getting started
+description: Install @soundor/icons and draw your first icon in a Soundor plugin or a browser app.
+---
+
+`@soundor/icons` is one npm package with five open-source icon collections:
+Lucide, Tabler, Phosphor, Heroicons and Material Symbols. Every icon has two
+implementations behind the same import. A Soundor plugin gets Soundor's native
+SVG from `@soundor/react/svg`, and a browser app gets ordinary React DOM
+`<svg>`.
+
+## Install
+
+With pnpm or npm:
+
+```sh
+pnpm add @soundor/icons
+```
+
+It needs React 19.3. In a Soundor plugin it also uses `@soundor/react` 0.19,
+which a Soundor project already has. A browser app doesn't need it.
+
+## In a Soundor plugin
+
+Import icons from a collection's subpath and render them like any component:
+
+```tsx title="src/main.tsx"
+import { Pause, Play } from '@soundor/icons/lucide';
+import { Gear } from '@soundor/icons/phosphor';
+import { render, View } from '@soundor/react';
+
+render(
+  <View style={{ flexDirection: 'row', gap: 8, backgroundColor: '#0e0f12' }}>
+    <Play size={24} color="#f2f4f7" />
+    <Pause size={24} color="#f2f4f7" />
+    <Gear size={24} color="#f2f4f7" label="Settings" />
+  </View>,
+);
+```
+
+`soundor build` and `soundor dev` bundle the native implementation, for VST3
+and the web runtime alike. No configuration is needed. Pass a `color`: Soundor
+has no CSS to inherit one from, so an icon without a color is black (see
+[Icon props](/docs/props#color)).
+
+For TypeScript to read the package as the CLI does, the UI's tsconfig needs
+the `soundor` condition. Projects made by `create-soundor-app` have it already:
+
+```jsonc title="tsconfig.app.json"
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "customConditions": ["soundor"],
+  },
+}
+```
+
+The declarations are the same for both implementations, so the icons
+type-check with or without it.
+
+## In a browser app
+
+The same import works in Vite, webpack, Next.js or any bundler that reads
+package `exports`. None of them knows the `soundor` condition, so they pick
+the browser implementation:
+
+```tsx
+import { Play } from '@soundor/icons/lucide';
+
+export function PlayButton() {
+  return (
+    <button type="button" aria-label="Play">
+      <Play size={20} />
+    </button>
+  );
+}
+```
+
+In a browser the default color is `currentColor`, which follows the CSS
+`color` around the icon.
+
+## Next
+
+- [Collections](/docs/collections): the subpaths, styles and naming rules.
+- [Icon props](/docs/props): size, color, stroke width and labels.
+- [Soundor and the browser](/docs/renderers): how one import selects two implementations.
+- Browse and copy icons in the [gallery](/).

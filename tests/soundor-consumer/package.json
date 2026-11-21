@@ -1,0 +1,22 @@
+{
+  "name": "@soundor/icons-soundor-consumer",
+  "private": true,
+  "description": "A Soundor plugin importing @soundor/icons, built with the Soundor CLI: its UI bundle must hold the Soundor implementation of the imported icons only.",
+  "type": "module",
+  "scripts": {
+    "test:integration": "soundor build web && vitest run"
+  },
+  "dependencies": {
+    "@soundor/icons": "workspace:*",
+    "@soundor/react": "catalog:",
+    "@soundor/web-runtime": "catalog:",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@soundor/config": "catalog:",
+    "@types/react": "catalog:",
+    "soundor": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

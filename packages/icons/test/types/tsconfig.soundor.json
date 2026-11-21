@@ -1,0 +1,13 @@
+{
+  // A Soundor plugin UI, as `create-soundor-app` sets one up: the soundor
+  // condition, Soundor's runtime types and no DOM.
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["es2023"],
+    "customConditions": ["soundor"],
+    "types": ["@soundor/environment"],
+    "skipLibCheck": false
+  },
+  "files": ["usage.tsx"]
+}

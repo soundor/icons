@@ -1,0 +1,109 @@
+---
+title: Soundor and the browser
+description: How one import selects Soundor's native SVG or React DOM, and what each renderer does.
+---
+
+Every icon is generated once, as data: its viewBox, presentation and elements.
+Two small renderers draw that data:
+
+```text
+                    upstream SVG files (pinned versions)
+                                   │
+                         scripts/generate.ts
+                                   │
+                generated/<subpath>/nodes.js  (one model per icon)
+                     ┌─────────────┴─────────────┐
+     generated/<subpath>/soundor.js    generated/<subpath>/web.js
+     createIcon from dist/soundor.js   createIcon from dist/web.js
+     → Svg, Path, Circle… from         → <svg>, <path>, <circle>…
+       @soundor/react/svg                 with React DOM
+```
+
+Both barrels export the same names and wrap the same `nodes.js`, so the native
+renderer and the browser draw the same geometry.
+
+## Resolution
+
+Each subpath in the package's `exports` has three conditions, in this order:
+
+```json title="packages/icons/package.json"
+"./lucide": {
+  "types": "./generated/lucide/index.d.ts",
+  "soundor": "./generated/lucide/soundor.js",
+  "default": "./generated/lucide/web.js"
+}
+```
+
+A resolver takes the first condition it knows, in the order of the keys:
+
+| Environment                                                  | Conditions it knows                                       | Gets         |
+| ------------------------------------------------------------ | --------------------------------------------------------- | ------------ |
+| `soundor build` and `soundor dev` (VST3 and the web runtime) | `soundor` (and `default`)                                 | `soundor.js` |
+| `@soundor/vitest` tests                                      | `soundor`, plus Vite's own                                | `soundor.js` |
+| Vite, webpack, Rollup, esbuild, Next.js                      | `browser`, `import`, `module`, `default`…                 | `web.js`     |
+| Node                                                         | `node`, `import`, `default`                               | `web.js`     |
+| TypeScript                                                   | `types` (with or without `customConditions: ["soundor"]`) | `index.d.ts` |
+
+The Soundor CLI turns on the condition in its UI bundler
+(`resolve.conditionNames: ['soundor']`), for VST3 and the web runtime.
+`@soundor/vitest` adds it to Vite's resolve conditions, and Soundor 0.16 and
+later have both. Nothing is decided at run time: a bundle contains one
+implementation, and the package's tests and the integration builds in
+`tests/` check that neither contains the other.
+
+The condition is on the public subpaths rather than inside the package (for
+example an `imports` map). When Vitest leaves a dependency to Node, Vite
+resolves the package's entry with `soundor` but Node resolves the package's
+own imports without it.
+
+## What Soundor draws
+
+Soundor's native SVG (`@soundor/react/svg`) draws `path`, `circle`, `rect`,
+`ellipse`, `line`, `polygon`, `polyline` and `g`. It supports fill and stroke
+paint (`none`, colors, `currentColor`), stroke width, caps, joins, miter limit
+and dashes, fill rules, three opacities and transforms. It has no gradients,
+masks, clip paths, patterns, filters, `<use>`, `<defs>`, text or images.
+
+The generator only writes what both renderers draw alike, and fails, naming
+the collection, style and icon, on:
+
+- an element Soundor lacks, such as `<mask>`, `<clipPath>`, `<linearGradient>` or `<use>`;
+- an attribute that would change the drawing, such as `clip-path`, `filter` or `style`;
+- a paint server (`url(#…)`), or a fixed color the `color` prop couldn't change;
+- path data or transforms outside the grammar Soundor parses, or units such as `%`;
+- a scene beyond Soundor's limits (4,096 elements, 64 levels).
+
+Some changes are safe, and the generator makes them openly. It records each
+one, and how many icons it applied to, in `generated/provenance.json`:
+
+| Change                                                   | Why it is safe                                                         |
+| -------------------------------------------------------- | ---------------------------------------------------------------------- |
+| An element with neither fill nor stroke is dropped       | It paints nothing (Tabler's 24×24 bounding-box path)                   |
+| `clip-rule` is dropped                                   | It only applies inside `<clipPath>`, which no icon uses                |
+| `class`, `id`, `data-*`, `<title>`, `<desc>` are dropped | They don't render, and nothing references them                         |
+| A missing viewBox becomes `0 0 width height`             | The coordinate system the file draws in (67 Material Symbols)          |
+| `fill="currentColor"` on Material Symbols' root          | The files leave fill unset (black); the icon font takes the text color |
+
+All five collections convert with no exclusions: every icon of every style is
+in the package.
+
+## Rendering and testing
+
+| Check                                                                       | Covers                                                                                      |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Every icon rendered by the Soundor implementation in Soundor's test runtime | The scene passes Soundor's validator (the engine's rules) and equals the generated geometry |
+| Every icon rendered by the browser implementation to markup                 | Equals its upstream SVG file, minus only the changes above                                  |
+| Snapshots of representative icons in both                                   | Generator regressions                                                                       |
+| `tests/soundor-consumer`, built with `soundor build web`                    | The CLI picks the native implementation and tree-shakes                                     |
+| `tests/browser-consumer`, built with Vite                                   | Vite picks the browser implementation and tree-shakes                                       |
+
+Browser rendering doesn't prove pixel parity with Soundor's renderer (Skia).
+These checks prove that both receive the same, valid geometry. One known
+difference: Soundor keeps coordinates as 32-bit floats, so `12.01` becomes
+`12.010000228881836`, far below a pixel.
+
+## The gallery
+
+[icons.soundor.dev](/) draws every icon with the browser implementation,
+loading one chunk per style the first time it shows that style. It doesn't run
+Soundor.

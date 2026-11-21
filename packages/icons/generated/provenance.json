@@ -1,0 +1,201 @@
+{
+  "generator": "scripts/generate.ts",
+  "notes": {
+    "invisible-element": "An element with neither fill nor stroke paints nothing (Tabler draws one as a bounding box).",
+    "clip-rule": "clip-rule only applies inside <clipPath>, which these icons do not use.",
+    "inert-attribute": "class, id and data-* attributes do not render: icons have no stylesheet and nothing references them.",
+    "non-rendering-element": "<title>, <desc> and <metadata> do not render; the label prop names an icon.",
+    "derived-viewbox": "The file has no viewBox: its coordinate system is its width and height, so the viewBox is 0 0 width height.",
+    "default-fill": "The file leaves fill unset (black); the collection sets fill=\"currentColor\" on the root so the color prop applies.",
+    "empty-group": "A group left with no children paints nothing."
+  },
+  "collections": [
+    {
+      "id": "lucide",
+      "title": "Lucide",
+      "origin": "npm:lucide-static@1.75.0",
+      "version": "1.75.0",
+      "license": "ISC AND MIT",
+      "licenseFile": "licenses/lucide.txt",
+      "homepage": "https://lucide.dev",
+      "variants": [
+        {
+          "subpath": "lucide",
+          "icons": 2091,
+          "notes": {
+            "inert-attribute": 2091
+          }
+        }
+      ]
+    },
+    {
+      "id": "tabler",
+      "title": "Tabler",
+      "origin": "npm:@tabler/icons@3.52.0",
+      "version": "3.52.0",
+      "license": "MIT",
+      "licenseFile": "licenses/tabler.txt",
+      "homepage": "https://tabler.io/icons",
+      "variants": [
+        {
+          "subpath": "tabler",
+          "icons": 5491,
+          "notes": {
+            "inert-attribute": 5491,
+            "invisible-element": 5491
+          }
+        },
+        {
+          "subpath": "tabler/filled",
+          "icons": 1054,
+          "notes": {
+            "inert-attribute": 1054,
+            "invisible-element": 1054
+          }
+        }
+      ]
+    },
+    {
+      "id": "phosphor",
+      "title": "Phosphor",
+      "origin": "npm:@phosphor-icons/core@2.1.1",
+      "version": "2.1.1",
+      "license": "MIT",
+      "licenseFile": "licenses/phosphor.txt",
+      "homepage": "https://phosphoricons.com",
+      "variants": [
+        {
+          "subpath": "phosphor",
+          "icons": 1512,
+          "notes": {}
+        },
+        {
+          "subpath": "phosphor/thin",
+          "icons": 1512,
+          "notes": {}
+        },
+        {
+          "subpath": "phosphor/light",
+          "icons": 1512,
+          "notes": {}
+        },
+        {
+          "subpath": "phosphor/bold",
+          "icons": 1512,
+          "notes": {}
+        },
+        {
+          "subpath": "phosphor/fill",
+          "icons": 1512,
+          "notes": {}
+        },
+        {
+          "subpath": "phosphor/duotone",
+          "icons": 1512,
+          "notes": {}
+        }
+      ]
+    },
+    {
+      "id": "heroicons",
+      "title": "Heroicons",
+      "origin": "npm:heroicons@2.2.0",
+      "version": "2.2.0",
+      "license": "MIT",
+      "licenseFile": "licenses/heroicons.txt",
+      "homepage": "https://heroicons.com",
+      "variants": [
+        {
+          "subpath": "heroicons",
+          "icons": 324,
+          "notes": {
+            "inert-attribute": 324
+          }
+        },
+        {
+          "subpath": "heroicons/solid",
+          "icons": 324,
+          "notes": {
+            "clip-rule": 267,
+            "inert-attribute": 324
+          }
+        },
+        {
+          "subpath": "heroicons/mini",
+          "icons": 324,
+          "notes": {
+            "clip-rule": 240,
+            "inert-attribute": 324
+          }
+        },
+        {
+          "subpath": "heroicons/micro",
+          "icons": 316,
+          "notes": {
+            "clip-rule": 220,
+            "inert-attribute": 316
+          }
+        }
+      ]
+    },
+    {
+      "id": "material",
+      "title": "Material Symbols",
+      "origin": "git:https://github.com/google/material-design-icons.git#10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7",
+      "version": "10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7",
+      "license": "Apache-2.0",
+      "licenseFile": "licenses/material-symbols.txt",
+      "homepage": "https://fonts.google.com/icons",
+      "variants": [
+        {
+          "subpath": "material",
+          "icons": 4157,
+          "notes": {
+            "default-fill": 4157,
+            "derived-viewbox": 67
+          }
+        },
+        {
+          "subpath": "material/filled",
+          "icons": 4157,
+          "notes": {
+            "default-fill": 4157,
+            "derived-viewbox": 67
+          }
+        },
+        {
+          "subpath": "material/rounded",
+          "icons": 4157,
+          "notes": {
+            "default-fill": 4157,
+            "derived-viewbox": 67
+          }
+        },
+        {
+          "subpath": "material/rounded/filled",
+          "icons": 4157,
+          "notes": {
+            "default-fill": 4157,
+            "derived-viewbox": 67
+          }
+        },
+        {
+          "subpath": "material/sharp",
+          "icons": 4157,
+          "notes": {
+            "default-fill": 4157,
+            "derived-viewbox": 67
+          }
+        },
+        {
+          "subpath": "material/sharp/filled",
+          "icons": 4157,
+          "notes": {
+            "default-fill": 4157,
+            "derived-viewbox": 67
+          }
+        }
+      ]
+    }
+  ]
+}

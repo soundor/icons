@@ -1,0 +1,11 @@
+{
+  // A browser app.
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["es2023", "DOM"],
+    "types": [],
+    "skipLibCheck": false
+  },
+  "files": ["usage.tsx"]
+}

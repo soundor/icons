@@ -1,0 +1,92 @@
+---
+title: Collections
+description: The five collections, their styles and subpaths, and how icons are named.
+---
+
+Each collection is a subpath of `@soundor/icons`, and so is each of its styles.
+The collection's own subpath is its default style. There is no root export:
+`import … from '@soundor/icons'` fails, so an app never pulls in a whole
+catalog by accident.
+
+| Collection                                         | Subpath                   | Style            | Icons | Stroke width |
+| -------------------------------------------------- | ------------------------- | ---------------- | ----: | ------------ |
+| [Lucide](https://lucide.dev)                       | `lucide`                  | Default          | 2,091 | 2            |
+| [Tabler](https://tabler.io/icons)                  | `tabler`                  | Outline          | 5,491 | 2            |
+|                                                    | `tabler/filled`           | Filled           | 1,054 | –            |
+| [Phosphor](https://phosphoricons.com)              | `phosphor`                | Regular          | 1,512 | –            |
+|                                                    | `phosphor/thin`           | Thin             | 1,512 | –            |
+|                                                    | `phosphor/light`          | Light            | 1,512 | –            |
+|                                                    | `phosphor/bold`           | Bold             | 1,512 | –            |
+|                                                    | `phosphor/fill`           | Fill             | 1,512 | –            |
+|                                                    | `phosphor/duotone`        | Duotone          | 1,512 | –            |
+| [Heroicons](https://heroicons.com)                 | `heroicons`               | Outline, 24 px   |   324 | 1.5          |
+|                                                    | `heroicons/solid`         | Solid, 24 px     |   324 | –            |
+|                                                    | `heroicons/mini`          | Solid, 20 px     |   324 | –            |
+|                                                    | `heroicons/micro`         | Solid, 16 px     |   316 | –            |
+| [Material Symbols](https://fonts.google.com/icons) | `material`                | Outlined         | 4,157 | –            |
+|                                                    | `material/filled`         | Outlined, filled | 4,157 | –            |
+|                                                    | `material/rounded`        | Rounded          | 4,157 | –            |
+|                                                    | `material/rounded/filled` | Rounded, filled  | 4,157 | –            |
+|                                                    | `material/sharp`          | Sharp            | 4,157 | –            |
+|                                                    | `material/sharp/filled`   | Sharp, filled    | 4,157 | –            |
+
+The exact upstream versions are in the package's `generated/provenance.json`.
+
+## Same names in every style
+
+All styles of a collection use the same export names. To switch styles,
+change the import path:
+
+```tsx
+import { Gear } from '@soundor/icons/phosphor'; // regular
+import { Gear as GearBold } from '@soundor/icons/phosphor/bold';
+import { PlayerPlay } from '@soundor/icons/tabler';
+import { PlayerPlay as PlayerPlayFilled } from '@soundor/icons/tabler/filled';
+```
+
+A style that is missing an icon simply doesn't export it. Tabler's filled set
+covers 1,054 of its icons, and Heroicons' micro set covers 316 of 324.
+TypeScript reports the missing export.
+
+Phosphor's React package takes the weight as a prop. Here each weight is a
+subpath, because a prop would put all six weights of every icon in your
+bundle.
+
+## Names
+
+An export is the upstream name in PascalCase:
+
+| Upstream (collection)   | Export        |
+| ----------------------- | ------------- |
+| `play` (Lucide)         | `Play`        |
+| `player-play` (Tabler)  | `PlayerPlay`  |
+| `arrow-left` (Lucide)   | `ArrowLeft`   |
+| `play_arrow` (Material) | `PlayArrow`   |
+| `24-hours` (Tabler)     | `Icon24Hours` |
+| `10k` (Material)        | `Icon10k`     |
+
+A JavaScript name can't start with a digit, so names that would get an `Icon`
+prefix. If two upstream names ever mapped to the same export, generation would
+fail rather than drop one.
+
+Each collection module also exports the types `IconProps`, `StrokeIconProps`
+and `IconComponent`.
+
+## What is not included
+
+- **Lucide's deprecated aliases.** lucide-static ships extra files under old
+  names, such as `alert-circle` for `circle-alert`. Only the current names are
+  exported.
+- **Material Symbols' other axes.** Material Symbols is a variable design with
+  weight (100–700), grade (−25, 0, 200) and optical size (20–48). The package
+  ships weight 400, grade 0 and optical size 24, in all three styles, unfilled
+  and filled. Every combination would be about 600,000 components. Another
+  weight would be a new set of subpaths, such as `material/w300`, and only
+  needs a configuration entry.
+- **Material Symbols' tags.** Google publishes them on fonts.google.com only,
+  not in its repository, so the gallery searches Material Symbols by name.
+
+No icon was left out or approximated because Soundor couldn't draw it. Every
+icon in every style uses only paths, basic shapes, opacity and fill rules,
+which Soundor's native SVG supports. The generator fails on anything else
+(see [Soundor and the browser](/docs/renderers#what-soundor-draws)).

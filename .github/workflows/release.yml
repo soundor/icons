@@ -1,0 +1,164 @@
+name: Release
+
+# Releases @soundor/icons with Changesets, as the main repository does.
+# Every check runs before anything is published, and only the publish job holds
+# the npm-production environment, which accepts deployments from main alone:
+#
+#   select    version or publish mode, and the plan of what to publish
+#   version   open or update the release pull request
+#   validate  format, lint, build and test, without the environment
+#   pack      pack exactly the planned packages
+#   publish   publish those tarballs to npm through trusted publishing (OIDC);
+#             Changesets tags and creates a GitHub release per package
+#   website   deploy icons.soundor.dev from the released commit
+#             (website.yml), so the docs describe what npm has
+#
+# A failed run is safe to repeat: npm never republishes a version, and versions
+# already published leave the plan.
+
+on:
+  push:
+    branches:
+      - main
+  # A rerun from main.
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  select:
+    name: Select
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      mode: ${{ steps.mode.outputs.mode }}
+      publish-plan: ${{ steps.mode.outputs.publish-plan-artifact-id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          cache: false
+
+      - name: Select the mode
+        id: mode
+        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+
+  version:
+    name: Version
+    needs: select
+    if: needs.select.outputs.mode == 'version'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          cache: false
+
+      - name: Create or update the release pull request
+        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          github-token: ${{ secrets.RELEASE_PR_TOKEN || github.token }}
+          script: pnpm version:packages
+          pr-title: 'chore: release icons'
+          commit-message: 'chore: release icons'
+
+  validate:
+    name: Validate
+    needs: select
+    if: needs.select.outputs.mode == 'publish'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          cache: false
+
+      - name: Install Chromium for the website's tests
+        run: pnpm --filter @soundor/icons-website exec playwright install --with-deps chromium
+
+      - name: Format, lint, build and test
+        run: pnpm check
+
+  pack:
+    name: Pack
+    needs: [select, validate]
+    if: needs.select.outputs.mode == 'publish'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      pack-dir: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          cache: false
+
+      - name: Build
+        run: pnpm turbo run build --filter=@soundor/icons
+
+      - name: Pack
+        id: pack
+        uses: changesets/action/pack@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          publish-plan-artifact-id: ${{ needs.select.outputs.publish-plan }}
+
+  publish:
+    name: Publish
+    # npm trusted publishing authenticates the publish through OIDC.
+    environment: npm-production
+    needs: pack
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          cache: false
+
+      - name: Publish
+        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir }}
+
+  website:
+    name: Website
+    needs: publish
+    if: always() && !cancelled() && needs.publish.result == 'success'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/website.yml
+    with:
+      cache: false
+      ref: ${{ github.sha }}

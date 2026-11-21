@@ -1,0 +1,14 @@
+# The plugin's Rust library, which every Soundor plugin has; this one passes
+# audio through. `soundor build` compiles it.
+[package]
+name = "soundor-icons-consumer"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+# Written by `soundor gen`, which `soundor build` runs.
+soundor = { path = "../.soundor/generated/rust/soundor" }
+
+# A workspace of its own, wherever the project is.
+[workspace]

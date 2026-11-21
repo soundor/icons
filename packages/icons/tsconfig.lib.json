@@ -1,0 +1,13 @@
+{
+  // The renderers: src/web.ts for the browser, src/soundor.ts for Soundor's
+  // runtime, which has no DOM.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "lib": ["es2023"],
+    "types": ["@soundor/environment"],
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.lib.tsbuildinfo"
+  },
+  "include": ["src"]
+}

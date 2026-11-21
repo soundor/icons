@@ -1,0 +1,14 @@
+node_modules/
+.turbo/
+dist/
+.output/
+.tanstack/
+.source/
+.soundor/
+routeTree.gen.ts
+*.tgz
+
+# Upstream sources the generator fetches (packages/icons/scripts/sources)
+.cache/
+# Integration test builds
+test-results/

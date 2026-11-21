@@ -1,0 +1,71 @@
+---
+title: Icon props
+description: The props every icon takes, the same in Soundor and in the browser.
+---
+
+Both implementations take the same props, and only props that both renderers
+implement the same way. TypeScript rejects anything else, including DOM-only
+props such as `className` and Soundor-only ones such as `style`.
+
+```tsx
+<Play size={24} color="#ffffff" />
+<Pause size={20} color="#888888" />
+<Settings size={18} strokeWidth={1.5} />
+```
+
+| Prop          | Type     | Default                              | Notes                                                                                  |
+| ------------- | -------- | ------------------------------------ | -------------------------------------------------------------------------------------- |
+| `size`        | `number` | 24 (Heroicons mini 20, micro 16)     | Width and height in logical pixels.                                                    |
+| `width`       | `number` | `size`                               | Overrides `size` for the width.                                                        |
+| `height`      | `number` | `size`                               | Overrides `size` for the height.                                                       |
+| `color`       | `string` | Browser: CSS `color`. Soundor: black | Any color both accept: `#rgb`, `#rrggbb`, `#rrggbbaa`, `rgb()`, `hsl()`, named colors. |
+| `strokeWidth` | `number` | The collection's                     | Stroked styles only: Lucide (2), Tabler outline (2), Heroicons outline (1.5).          |
+| `opacity`     | `number` | 1                                    | The whole icon, 0 to 1.                                                                |
+| `label`       | `string` | none                                 | Accessible name. Without one the icon is decorative.                                   |
+
+## Size and viewBox
+
+`size` sets the icon's box. The geometry keeps its upstream coordinate system
+(the viewBox): Lucide's 24-unit grid, Phosphor's 256 units, Material's 960. It
+scales to fit, centered, as SVG's default `xMidYMid meet` does in both
+renderers.
+
+## Color
+
+Every icon paints with `currentColor`, and `color` sets it:
+
+- **Browser:** `color` becomes the `<svg>`'s `color` attribute. Leave it out
+  and the icon follows the surrounding CSS `color`, as text does.
+- **Soundor:** `color` becomes the scene's root `color`, which `currentColor`
+  uses. Soundor's native SVG doesn't inherit from the views around it, so an
+  icon without `color` is black. Pass one, usually from your theme.
+
+## Stroke width
+
+Only collections drawn with strokes have `strokeWidth`. It is in the icon's
+own units, so it scales with `size`, as upstream. Filled styles, Phosphor's
+weights and Material Symbols are outlines, so their props don't include
+`strokeWidth`.
+
+## Accessibility
+
+| `label`  | Browser                           | Soundor                                                   |
+| -------- | --------------------------------- | --------------------------------------------------------- |
+| set      | `role="img"` `aria-label={label}` | `accessibilityRole="image"`, `accessibilityLabel={label}` |
+| left out | `aria-hidden="true"`              | not perceived (an `Svg` without a role or label)          |
+
+An icon inside a button is usually decorative: label the button, not the icon.
+
+## Types
+
+```ts
+import type {
+  IconComponent,
+  IconProps,
+  StrokeIconProps,
+} from '@soundor/icons/lucide';
+```
+
+`IconComponent<P>` is a function component with a `displayName`, the export
+name. Stroked styles' icons are `IconComponent<StrokeIconProps>`, the others
+`IconComponent<IconProps>`.
