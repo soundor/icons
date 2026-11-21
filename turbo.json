@@ -6,8 +6,21 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
+    "@soundor/icons#build": {
+      "dependsOn": ["^build"],
+      "outputs": [
+        "dist/**",
+        "generated/**",
+        "catalog/**",
+        "licenses/**",
+        "THIRD_PARTY_NOTICES.md"
+      ]
+    },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "@soundor/icons#test": {
+      "dependsOn": ["build"]
     },
     "dev": {
       "dependsOn": ["^build"],

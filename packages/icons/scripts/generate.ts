@@ -1,9 +1,10 @@
 /**
- * Generates the package's icons from the pinned upstream sources:
+ * Generates the package's icons from the pinned upstream sources: generated/,
+ * catalog/, licenses/, THIRD_PARTY_NOTICES.md and package.json's exports. The
+ * package's build runs it; only the exports are committed.
  *
- *   pnpm generate            write generated/, catalog/, licenses/,
- *                            THIRD_PARTY_NOTICES.md and package.json exports
- *   pnpm generate --check    fail if any of them differs from what is committed
+ * Against the previous output on disk, it reports the icons added and
+ * removed: a removed or renamed icon is a breaking change.
  *
  * The npm sources are the package's devDependencies, at the exact versions in
  * pnpm-workspace.yaml's catalog. Material Symbols is fetched from Git at the
@@ -20,20 +21,13 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
-import { parseArgs } from 'node:util';
 
 import { collections } from './collections.ts';
-import { buildOutput } from './lib/output.ts';
+import { buildOutput, type CatalogCollection } from './lib/output.ts';
 
 const PACKAGE = join(import.meta.dirname, '..');
 /** What the generator owns: anything else in these is deleted. */
 const OWNED_DIRS = ['generated', 'catalog', 'licenses'];
-
-const { values } = parseArgs({
-  options: {
-    check: { type: 'boolean', default: false },
-  },
-});
 
 function filesIn(dir: string): string[] {
   if (!existsSync(dir)) return [];
@@ -70,22 +64,59 @@ const changed = Object.entries(files).filter(([path, contents]) => {
   return !existsSync(absolute) || readFileSync(absolute, 'utf8') !== contents;
 });
 
-if (values.check) {
-  if (changed.length > 0 || stale.length > 0) {
-    console.error('The generated files are out of date; run pnpm generate.');
-    for (const [path] of changed) console.error(`  changed: ${path}`);
-    for (const path of stale) console.error(`  stale: ${path}`);
-    process.exit(1);
-  }
-  console.log('The generated files are up to date.');
-} else {
-  for (const [path, contents] of changed) {
-    mkdirSync(dirname(join(PACKAGE, path)), { recursive: true });
-    writeFileSync(join(PACKAGE, path), contents);
-  }
-  for (const path of stale) rmSync(join(PACKAGE, path));
-  const icons = Object.keys(output.exports).length;
-  console.log(
-    `Generated ${icons} subpaths: ${changed.length} file(s) written, ${stale.length} removed, in ${Math.round(performance.now() - started)} ms.`,
+/** Every `subpath name` a catalog file exports. */
+function exportsOf(json: string): Set<string> {
+  const catalog = JSON.parse(json) as CatalogCollection;
+  const subpaths = Object.fromEntries(
+    catalog.variants.map((variant) => [variant.id, variant.subpath]),
+  );
+  const all = catalog.variants.map((variant) => variant.id);
+  return new Set(
+    catalog.icons.flatMap((icon) =>
+      (icon.variants ?? all).map((id) => `${subpaths[id]} ${icon.name}`),
+    ),
   );
 }
+
+// What changed for importers, against the previous output: none on a first
+// run, or when the catalog is unchanged.
+const added: string[] = [];
+const removed: string[] = [];
+for (const [path, contents] of changed) {
+  if (!path.startsWith('catalog/')) continue;
+  const previous = join(PACKAGE, path);
+  const before = existsSync(previous)
+    ? exportsOf(readFileSync(previous, 'utf8'))
+    : undefined;
+  if (before === undefined) continue;
+  const after = exportsOf(contents);
+  for (const name of after) if (!before.has(name)) added.push(name);
+  for (const name of before) if (!after.has(name)) removed.push(name);
+}
+
+for (const [path, contents] of changed) {
+  mkdirSync(dirname(join(PACKAGE, path)), { recursive: true });
+  writeFileSync(join(PACKAGE, path), contents);
+}
+for (const path of stale) rmSync(join(PACKAGE, path));
+
+const icons = Object.keys(output.exports).length;
+console.log(
+  `Generated ${icons} subpaths: ${changed.length} file(s) written, ${stale.length} removed, in ${Math.round(performance.now() - started)} ms.`,
+);
+const list = (names: readonly string[]) =>
+  [...names]
+    .sort()
+    .map((name) => {
+      const [subpath, icon] = name.split(' ');
+      return `  @soundor/icons/${subpath} ${icon}`;
+    })
+    .join('\n');
+if (added.length > 0)
+  console.log(`${added.length} icon(s) added:\n${list(added)}`);
+if (removed.length > 0)
+  console.warn(
+    `${removed.length} icon(s) removed or renamed, a breaking change:\n${list(removed)}`,
+  );
+if (changed.some(([path]) => path === 'package.json'))
+  console.warn('package.json exports changed: commit them.');

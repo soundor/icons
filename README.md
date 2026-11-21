@@ -93,17 +93,13 @@ The repository has four parts:
 
 ### Generating icons
 
-```sh
-pnpm generate           # regenerate from the pinned upstream sources
-pnpm generate --check   # fail if the committed output is out of date
-```
-
-Generated code is committed, so builds never fetch icon sources. The npm
-collections are pinned exactly in `pnpm-workspace.yaml`'s catalog. Material
-Symbols is fetched from Google's repository, at the commit in
-`packages/icons/scripts/sources/material.ts`, into `packages/icons/.cache/`.
-CI checks that the committed output matches the sources. See
-[CONTRIBUTING.md](CONTRIBUTING.md) to update a collection or add one.
+The package's build generates the icons from the pinned upstream sources;
+`pnpm generate` runs that step alone. Only `exports` in
+`packages/icons/package.json` is committed. The npm collections are pinned in
+`pnpm-workspace.yaml`'s catalog. Material Symbols is fetched from Google's
+repository at the commit in `packages/icons/scripts/sources/material.ts`, into
+`packages/icons/.cache/`, once. See [CONTRIBUTING.md](CONTRIBUTING.md) to
+update a collection or add one.
 
 ### Releases and the website
 

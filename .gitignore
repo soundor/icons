@@ -10,5 +10,10 @@ routeTree.gen.ts
 
 # Upstream sources the generator fetches (packages/icons/scripts/sources)
 .cache/
+# What the generator writes at build time, but the package's exports
+packages/icons/generated/
+packages/icons/catalog/
+packages/icons/licenses/
+packages/icons/THIRD_PARTY_NOTICES.md
 # Integration test builds
 test-results/

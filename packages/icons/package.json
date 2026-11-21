@@ -132,7 +132,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown --clean && tsc -b",
+    "build": "node scripts/generate.ts && tsdown --clean && tsc -b",
     "dev": "tsdown --watch",
     "generate": "node scripts/generate.ts",
     "test": "vitest run",

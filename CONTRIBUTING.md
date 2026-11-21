@@ -37,16 +37,17 @@ upstream SVG files ─▶ scripts/sources/*      (one adapter per collection)
 `src/web.ts` and `src/soundor.ts` are the two renderers, which tsdown builds
 into `dist/`. The generated modules import them.
 
-Don't edit anything under `generated/`, `catalog/` or `licenses/`, or
-`THIRD_PARTY_NOTICES.md`, or the `exports` of `packages/icons/package.json` by
-hand. Run `pnpm generate`. CI's `pnpm generate --check` fails when they don't
-match the pinned sources.
+The build generates `generated/`, `catalog/`, `licenses/`,
+`THIRD_PARTY_NOTICES.md` and the `exports` of `packages/icons/package.json`
+from the pinned sources (`pnpm generate` runs that step alone). Only the
+exports are committed: don't edit them by hand. CI fails when the build
+changes them.
 
 ## Updating an upstream collection
 
 See [Updating upstream icons](https://icons.soundor.dev/docs/guides/updating-upstream):
-change the pinned version, run `pnpm generate`, review the diff (one line per
-icon), and add a changeset. A removed or renamed icon is a breaking change.
+change the pinned version, run `pnpm generate`, read the icons it reports added
+and removed, and add a changeset. A removed or renamed icon is a breaking change.
 
 ## Adding a collection
 

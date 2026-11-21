@@ -7,7 +7,7 @@ inputs:
     required: false
     default: 'false'
   cache:
-    description: Whether to cache the pnpm store
+    description: Whether to cache the pnpm store and the upstream icon sources
     required: false
     default: 'true'
 
@@ -36,5 +36,13 @@ runs:
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
+    # The Material Symbols files the generator fetches from Git at a pinned
+    # commit (packages/icons/scripts/sources/material.ts). Without the cache,
+    # the build fetches them, in about 20 seconds.
+    - if: ${{ inputs.cache == 'true' }}
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: packages/icons/.cache
+        key: upstream-${{ hashFiles('packages/icons/scripts/sources/material.ts') }}
     - shell: bash
       run: pnpm install --frozen-lockfile
