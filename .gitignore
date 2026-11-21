@@ -17,3 +17,6 @@ packages/icons/licenses/
 packages/icons/THIRD_PARTY_NOTICES.md
 # Integration test builds
 test-results/
+
+# Written from packages/icons/CHANGELOG.md by apps/website/scripts/changelog.ts
+apps/website/content/docs/changelog.md
