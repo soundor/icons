@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build && tsc --noEmit",
-    "dev": "vite dev --host 0.0.0.0",
+    "build": "node scripts/changelog.ts && vite build && tsc --noEmit",
+    "dev": "node scripts/changelog.ts && vite dev --host 0.0.0.0",
     "preview": "vite preview",
     "test": "playwright test"
   },
