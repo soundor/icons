@@ -130,6 +130,8 @@ test("switches an icon's variant, and offers no stroke width for filled icons", 
 
 test('moves through the grid with the keyboard', async ({ page }) => {
   await search(page).fill('play');
+  // The results for “play” replace the cells: focus one of theirs.
+  await expect(count(page)).toHaveText(/icons for “play”/);
   const first = page.locator('[data-icon-index="0"]');
   await first.focus();
   await page.keyboard.press('ArrowRight');
