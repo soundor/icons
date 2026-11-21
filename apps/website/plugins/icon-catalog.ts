@@ -11,7 +11,7 @@
  * one chunk per variant, loaded when the gallery first shows that variant.
  */
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { Plugin } from 'vite';
@@ -22,6 +22,13 @@ const CATALOG = join(import.meta.dirname, '../../../packages/icons/catalog');
 const ORDER = ['lucide', 'tabler', 'phosphor', 'heroicons', 'material'];
 
 function read(): CatalogCollection[] {
+  // The generator writes the catalog; `pnpm build` and `pnpm dev` run it first
+  // through Turborepo, so a site started on its own finds none.
+  if (!existsSync(CATALOG)) {
+    throw new Error(
+      `The icon catalog is missing (${CATALOG}). Run \`pnpm build\` or \`pnpm generate\` at the repository root, or start the site with \`pnpm dev\` there.`,
+    );
+  }
   return readdirSync(CATALOG)
     .filter((file) => file.endsWith('.json'))
     .map(
