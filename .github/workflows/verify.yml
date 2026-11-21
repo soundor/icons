@@ -51,3 +51,18 @@ jobs:
           key: upstream-${{ hashFiles('packages/icons/scripts/sources/material.ts') }}
       # The committed icons are what the pinned upstream sources generate.
       - run: pnpm generate --check
+
+  # The one check to require in branch protection: it passes only when every
+  # job above passed, so new jobs need no settings change, only this list.
+  verify:
+    name: Verify
+    if: always()
+    needs: [check, integration, generated]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Every job passed
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          echo "$RESULTS"
+          jq -e 'all(. == "success")' <<< "$RESULTS"

@@ -107,40 +107,10 @@ CI checks that the committed output matches the sources. See
 
 ### Releases and the website
 
-1. Add a changeset with `pnpm changeset` for a package change. The package is
-   versioned on its own, apart from Soundor and Soundor Components. The first
-   release is `0.1.0`.
-2. The **Release** workflow on `main` opens or updates a version PR. Merging
-   it releases to npm: the workflow checks, builds and packs the package
-   without secrets. Only its publish job runs in the `npm-production`
-   environment, which accepts deployments from `main` alone. Changesets
-   creates the tag and the GitHub release.
-3. The **Website** workflow deploys `apps/website/dist/client` to GitHub
-   Pages. Release calls it after each npm release, with the released commit,
-   and it can be run by hand for a website-only change
-   (`gh workflow run website.yml -f ref=main`).
-
-### Manual setup
-
-These need a maintainer, once:
-
-- **GitHub Actions:** allow Actions to create pull requests (Settings →
-  Actions → General), or add a `RELEASE_PR_TOKEN` secret with contents and
-  pull-request access if release PRs must trigger required checks.
-- **Environment:** create `npm-production` (Settings → Environments) and
-  limit its deployment branches to `main`.
-- **npm trusted publishing:** on npmjs.com, add a trusted publisher for
-  `@soundor/icons`: repository `soundor/icons`, workflow `release.yml`,
-  environment `npm-production`. If npm needs the package to exist first, a
-  maintainer can publish `0.1.0` from a verified tarball (`pnpm check`,
-  `pnpm --filter @soundor/icons pack`), then add the publisher.
-- **GitHub Pages:** set the source to GitHub Actions, and the custom domain to
-  `icons.soundor.dev`, with HTTPS enforced.
-- **DNS:** a `CNAME` record from `icons.soundor.dev` to `soundor.github.io`.
-  Verifying the domain for the organization (Settings → Pages) protects it
-  from takeover.
-- **Social preview:** upload `apps/website/public/social-preview.png` in the
-  repository settings.
+Add a changeset (`pnpm changeset`) with a package change. On `main`, the
+**Release** workflow opens a version PR; merging it publishes to npm from the
+`npm-production` environment and deploys the website. A website-only change
+deploys with `gh workflow run website.yml -f ref=main`.
 
 ## License
 
