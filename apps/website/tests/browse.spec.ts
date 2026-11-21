@@ -221,9 +221,26 @@ test('keeps the scroll position when an icon is selected, and the icon in view w
   await scroller.evaluate((element) => element.scrollBy(0, 3000));
   const top = await scroller.evaluate((element) => element.scrollTop);
   expect(top).toBeGreaterThan(2000);
-  // A cell on screen, so the click itself does not scroll.
+  // A cell on screen, once the rows there are drawn, so the click itself
+  // does not scroll.
   const box = (await scroller.boundingBox())!;
-  await page.mouse.click(box.x + 60, box.y + box.height / 2);
+  const point = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  let index: string | undefined;
+  await expect
+    .poll(async () => {
+      index = await page.evaluate(
+        ({ x, y }) =>
+          document
+            .elementFromPoint(x, y)
+            ?.closest('[role="listitem"]')
+            ?.querySelector('[data-icon-index]')
+            ?.getAttribute('data-icon-index') ?? undefined,
+        point,
+      );
+      return index;
+    })
+    .toBeDefined();
+  await page.locator(`[data-icon-index="${index}"]`).click();
   await expect(page.getByTestId('details')).toBeVisible();
   expect(await scroller.evaluate((element) => element.scrollTop)).toBe(top);
 
