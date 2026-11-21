@@ -19,4 +19,4 @@ packages/icons/THIRD_PARTY_NOTICES.md
 test-results/
 
 # Written from packages/icons/CHANGELOG.md by apps/website/scripts/changelog.ts
-apps/website/content/docs/changelog.md
+apps/website/content/docs/changelog.mdx
