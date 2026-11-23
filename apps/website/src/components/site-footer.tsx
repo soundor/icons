@@ -1,0 +1,95 @@
+import { Link } from '@tanstack/react-router';
+
+const repository = 'https://github.com/soundor/icons';
+
+/** The year the copyright starts, as in the repository's LICENSE. */
+const firstYear = 2026;
+/** The year the page was built: the site is rebuilt with every release. */
+const year = new Date().getFullYear();
+const years = year > firstYear ? `${firstYear}–${year}` : `${firstYear}`;
+
+const link = 'hover:text-fd-foreground focus-visible:text-fd-foreground';
+
+/**
+ * The legal line every page ends with: the copyright, the licenses, and the
+ * Soundor-wide Privacy Policy and Brand Guidelines.
+ */
+function Legal() {
+  return (
+    <div className="flex flex-col gap-2 text-xs text-fd-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <p>
+        © <span suppressHydrationWarning>{years}</span> Dmitrii Balakin.{' '}
+        <code className="font-mono">@soundor/icons</code>’ code is released
+        under the{' '}
+        <a
+          className={`underline underline-offset-2 ${link}`}
+          href={`${repository}/blob/main/LICENSE`}
+        >
+          MIT License
+        </a>
+        ; each icon keeps its collection’s{' '}
+        <Link
+          className={`underline underline-offset-2 ${link}`}
+          to="/docs/$"
+          params={{ _splat: 'licensing' }}
+        >
+          license
+        </Link>
+        .
+      </p>
+      <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-1">
+        <a className={link} href="https://soundor.dev/privacy">
+          Privacy
+        </a>
+        <a className={link} href="https://soundor.dev/brand">
+          Brand
+        </a>
+      </nav>
+    </div>
+  );
+}
+
+/** The home page's footer. */
+export function SiteFooter() {
+  return (
+    <footer role="contentinfo" className="border-t">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 text-sm text-fd-muted-foreground sm:px-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            Lucide, Tabler, Phosphor, Heroicons and Material Symbols for Soundor
+            and the browser.
+          </p>
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link className={link} to="/browse">
+              Browse
+            </Link>
+            <Link className={link} to="/docs/$" params={{ _splat: '' }}>
+              Docs
+            </Link>
+            <a className={link} href={repository}>
+              GitHub
+            </a>
+            <a className={link} href="https://components.soundor.dev/">
+              Components
+            </a>
+            <a className={link} href="https://soundor.dev/">
+              Soundor
+            </a>
+          </nav>
+        </div>
+        <div className="border-t pt-6">
+          <Legal />
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/** The legal line under a documentation page, after its previous/next links. */
+export function PageLegal() {
+  return (
+    <footer className="mt-10 border-t pt-6">
+      <Legal />
+    </footer>
+  );
+}

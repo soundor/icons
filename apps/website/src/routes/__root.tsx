@@ -24,6 +24,11 @@ export const Route = createRootRoute({
         content:
           'Lucide, Tabler, Phosphor, Heroicons and Material Symbols for Soundor plugins and the browser.',
       },
+      {
+        property: 'og:image',
+        content: 'https://icons.soundor.dev/social-preview.png',
+      },
+      { name: 'twitter:card', content: 'summary_large_image' },
     ],
     links: [
       { rel: 'stylesheet', href: styles },

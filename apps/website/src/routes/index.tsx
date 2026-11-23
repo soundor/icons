@@ -56,6 +56,7 @@ import { useState } from 'react';
 import { collections } from 'virtual:icon-collections';
 
 import { codeOptions, tsxHighlighter } from '../components/highlighter';
+import { SiteFooter } from '../components/site-footer';
 import { navLinks } from '../layout-options';
 
 export const Route = createFileRoute('/')({ component: Home });
@@ -356,55 +357,7 @@ function Home() {
           </section>
         </div>
       </div>
-      <Footer />
+      <SiteFooter />
     </HomeLayout>
-  );
-}
-
-function Footer() {
-  return (
-    <footer role="contentinfo" className="border-t">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-fd-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <p>
-          @soundor/icons is MIT licensed. Each icon keeps its collection&apos;s
-          license:{' '}
-          <Link
-            className="underline underline-offset-2 hover:text-fd-foreground"
-            to="/docs/$"
-            params={{ _splat: 'licensing' }}
-          >
-            licensing
-          </Link>
-          .
-        </p>
-        <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
-          <Link className="hover:text-fd-foreground" to="/browse">
-            Browse
-          </Link>
-          <Link
-            className="hover:text-fd-foreground"
-            to="/docs/$"
-            params={{ _splat: '' }}
-          >
-            Docs
-          </Link>
-          <a
-            className="hover:text-fd-foreground"
-            href="https://github.com/soundor/icons"
-          >
-            GitHub
-          </a>
-          <a
-            className="hover:text-fd-foreground"
-            href="https://components.soundor.dev/"
-          >
-            Components
-          </a>
-          <a className="hover:text-fd-foreground" href="https://soundor.dev/">
-            Soundor
-          </a>
-        </nav>
-      </div>
-    </footer>
   );
 }

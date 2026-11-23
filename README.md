@@ -1,5 +1,5 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/soundor-icons-logo-dark-bg.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/soundor-icons-logo-on-dark.svg">
   <img alt="Soundor Icons" src="assets/brand/soundor-icons-logo.svg" height="64">
 </picture>
 
@@ -89,7 +89,7 @@ The repository has four parts:
 - [`packages/icons`](packages/icons): `@soundor/icons`, with its two renderers (`src/`), the generator (`scripts/`), the generated icons (`generated/`) and their licenses (`licenses/`).
 - [`apps/website`](apps/website): the gallery and documentation, built with Fumadocs on TanStack Start and Vite.
 - [`tests/soundor-consumer`](tests/soundor-consumer) and [`tests/browser-consumer`](tests/browser-consumer): the same imports built with `soundor build web` and with Vite. Each bundle must hold its own implementation, and only the imported icons.
-- [`assets/brand`](assets/brand): the logo.
+- [`assets/brand`](assets/brand): the logo, under its own [notice](assets/brand/LICENSE.md).
 
 ### Generating icons
 
@@ -108,10 +108,18 @@ Add a changeset (`pnpm changeset`) with a package change. On `main`, the
 `npm-production` environment and deploys the website. A website-only change
 deploys with `gh workflow run website.yml -f ref=main`.
 
-## License
+## License & Branding
 
 Soundor Icons' own code is [MIT licensed](LICENSE). The icons stay under their
 upstream licenses: ISC and MIT (Lucide), MIT (Tabler, Phosphor, Heroicons) and
 Apache-2.0 (Material Symbols). The full texts are in
 [`packages/icons/licenses/`](packages/icons/licenses), and published with the
 package. See [Licensing](https://icons.soundor.dev/docs/licensing).
+
+The Soundor name and the Soundor Icons logos, unlike the icons, are the project's identity, not part of
+the software license: the logo files in [`assets/brand`](assets/brand) have their
+own [notice](assets/brand/LICENSE.md). You are free to build and sell plugins,
+open source or proprietary, with Soundor under the MIT License, and to say they
+are built with Soundor; please don't present them as official Soundor releases.
+See the [Brand Guidelines](https://soundor.dev/brand) and [BRANDING.md](BRANDING.md),
+and the [Privacy Policy](https://soundor.dev/privacy).
