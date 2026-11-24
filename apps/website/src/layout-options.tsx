@@ -2,7 +2,7 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { ExternalLink } from 'lucide-react';
 
 // The repository's brand files, which the README shows too.
-import logoDark from '../../../assets/brand/soundor-icons-logo-dark-bg.svg?url';
+import logoDark from '../../../assets/brand/soundor-icons-logo-on-dark.svg?url';
 import logo from '../../../assets/brand/soundor-icons-logo.svg?url';
 
 export const layoutOptions = {
@@ -13,12 +13,14 @@ export const layoutOptions = {
         <img
           src={logo}
           alt="Soundor Icons"
+          width={93}
           height={36}
           className="h-9 w-auto dark:hidden"
         />
         <img
           src={logoDark}
           alt="Soundor Icons"
+          width={93}
           height={36}
           className="hidden h-9 w-auto dark:block"
         />
