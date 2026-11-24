@@ -26,6 +26,9 @@ The npm package carries everything the licenses ask to be distributed:
 - `licenses/`: each collection's license file, verbatim from the version it
   was generated from. `lucide.txt` includes Feather's MIT notice and the list
   of icons it covers.
+- `generated/<subpath>/LICENSE`: the same text beside each subpath's modules,
+  so a tool that finds a file's license next to it gives the icons their
+  collection's license, not the package's MIT.
 - `THIRD_PARTY_NOTICES.md`: which collection comes from where, under which
   license.
 - `generated/provenance.json`: exact sources, versions and every change the
@@ -39,8 +42,12 @@ All five allow use, modification and redistribution, including commercially.
 
 - **ISC and MIT** (Lucide, Feather, Tabler, Phosphor, Heroicons): keep the
   copyright and license notice with copies of the artwork. A plugin bundle is
-  a copy. Include the notices of the collections you use with your product,
-  for example in its about box or documentation, as you would for any MIT
+  a copy. A Soundor build does this for you: it ships the notices of what it
+  contains in its `licenses/` folder, and for this package that is the
+  license of each collection you import from, beside the package's MIT
+  ([third-party notices](https://soundor.dev/docs/licenses)). Elsewhere,
+  include the notices of the collections you use with your product, for
+  example in its about box or documentation, as you would for any MIT
   dependency.
 - **Apache-2.0** (Material Symbols): include a copy of the license, keep the
   attribution notices, and mark modified files. The generated modules are
