@@ -2,6 +2,8 @@
 
 import { expect, test } from '@playwright/test';
 
+import { collectionCount, iconCountLabel } from './catalog';
+
 test.beforeEach(async ({ page }) => {
   await page.goto('./');
 });
@@ -47,7 +49,7 @@ test('opens a collection in the browser', async ({ page }) => {
   await page.getByRole('link', { name: /^Heroicons/ }).click();
   await expect(page).toHaveURL(/\/browse\?c=heroicons$/);
   await expect(page.getByTestId('result-count')).toHaveText(
-    '324 icons in Heroicons',
+    `${iconCountLabel(collectionCount('heroicons'))} in Heroicons`,
   );
 });
 
