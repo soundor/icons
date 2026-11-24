@@ -240,8 +240,8 @@ catalogs:
       specifier: ^1.70.0
       version: 1.75.0
     lucide-static:
-      specifier: 1.75.0
-      version: 1.75.0
+      specifier: 1.77.0
+      version: 1.77.0
     oxfmt:
       specifier: ^0.79.0
       version: 0.79.0
@@ -406,7 +406,7 @@ importers:
         version: 2.2.0
       lucide-static:
         specifier: 'catalog:'
-        version: 1.75.0
+        version: 1.77.0
       react:
         specifier: 'catalog:'
         version: 19.3.1
@@ -2796,8 +2796,8 @@ packages:
       '@types/react':
         optional: true
 
-  lucide-static@1.75.0:
-    resolution: {integrity: sha512-vtAnJzxoH8jp0++Ydf22CPAAL3WfQQjmDG+OuRlG+CXouLCrlfTz7zWuDvHkTtj61czkhJAISChHDXkxLLqKRw==}
+  lucide-static@1.77.0:
+    resolution: {integrity: sha512-v+BzpQrjlwDRWPDzzAu5IFhOkI6jVKb91fsjw1ZSS7Tsb2YvRX5olRN0DXGW99LF2wV4fycuTf5aPOMC62ZW0g==}
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -5829,7 +5829,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  lucide-static@1.75.0: {}
+  lucide-static@1.77.0: {}
 
   magic-string@0.30.21:
     dependencies:

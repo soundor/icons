@@ -47,7 +47,7 @@ catalog:
   '@phosphor-icons/core': 2.1.1
   '@tabler/icons': 3.52.0
   heroicons: 2.2.0
-  lucide-static: 1.75.0
+  lucide-static: 1.77.0
 
 catalogMode: strict
 engineStrict: true
