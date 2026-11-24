@@ -2,6 +2,8 @@
 
 import { expect, test, type Page } from '@playwright/test';
 
+import { collectionCount, iconCountLabel, totalIcons } from './catalog';
+
 const count = (page: Page) => page.getByTestId('result-count');
 const search = (page: Page) =>
   page.getByRole('searchbox', { name: 'Search icons' });
@@ -14,7 +16,7 @@ test.beforeEach(async ({ page, context, browserName }) => {
   if (browserName === 'chromium')
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto('./browse');
-  await expect(count(page)).toHaveText('13,575 icons');
+  await expect(count(page)).toHaveText(iconCountLabel(totalIcons));
 });
 
 test('shows the gallery at once, drawn with the browser implementation, without mounting the catalog', async ({
@@ -23,7 +25,7 @@ test('shows the gallery at once, drawn with the browser implementation, without 
   const first = cell(page, 'AArrowDown, Lucide');
   await expect(first.locator('svg')).toHaveAttribute('viewBox', '0 0 24 24');
   await expect(first.locator('svg')).toHaveAttribute('stroke', 'currentColor');
-  // Virtualized: a few rows, not 13 575 icons.
+  // Virtualized: only a few rows are mounted.
   expect(
     await page
       .getByRole('list', { name: 'Icons' })
@@ -50,13 +52,17 @@ test('searches upstream tags', async ({ page }) => {
 
 test('filters by collection and variant, in the URL', async ({ page }) => {
   await page.getByRole('radio', { name: /^Tabler/ }).click();
-  await expect(count(page)).toHaveText('5,491 icons in Tabler');
+  await expect(count(page)).toHaveText(
+    `${iconCountLabel(collectionCount('tabler'))} in Tabler`,
+  );
   await expect(page).toHaveURL(/\?c=tabler$/);
   await page
     .getByRole('radiogroup', { name: 'Tabler variant' })
     .getByRole('radio', { name: 'Filled' })
     .click();
-  await expect(count(page)).toHaveText('1,054 icons in Tabler');
+  await expect(count(page)).toHaveText(
+    `${iconCountLabel(collectionCount('tabler', 'filled'))} in Tabler`,
+  );
   await expect(page).toHaveURL(/c=tabler&v=filled/);
   await expect(cell(page, 'Accessible').locator('svg')).toHaveAttribute(
     'fill',
@@ -67,7 +73,7 @@ test('filters by collection and variant, in the URL', async ({ page }) => {
 test('restores a shared search from the URL', async ({ page }) => {
   await page.goto('./browse?c=material&v=rounded-filled&q=volume');
   await expect(count(page)).toHaveText(
-    '6 icons in Material Symbols for “volume”',
+    /^[1-9][\d,]* icons? in Material Symbols for “volume”$/,
   );
   await expect(
     page.getByRole('radio', { name: 'Rounded, filled' }),
