@@ -216,10 +216,7 @@ function Home() {
           <section className="grid gap-10 pt-12 pb-16 sm:pt-20 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-16">
             <div className="max-w-2xl">
               <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
-                Icons for{' '}
-                <span className="bg-gradient-to-r from-fd-primary to-fd-foreground/60 bg-clip-text text-transparent">
-                  Soundor
-                </span>
+                Icons for Soundor
               </h1>
               <p className="mt-3 text-base text-balance text-fd-muted-foreground sm:text-lg">
                 {TOTAL.toLocaleString('en-US')} icons from Lucide, Tabler,
