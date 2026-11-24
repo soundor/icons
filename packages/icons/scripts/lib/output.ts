@@ -159,6 +159,9 @@ export async function buildOutput(
       continue;
     }
 
+    const licenseText = source.license.endsWith('\n')
+      ? source.license
+      : `${source.license}\n`;
     const catalog = new Map<
       string,
       { icon: CatalogIcon; variants: string[] }
@@ -184,6 +187,10 @@ export async function buildOutput(
           emitted,
         ),
       );
+      // Beside the variant's modules, the license file nearest to them: a
+      // bundler that ships a build's notices (Soundor's) gives the icons the
+      // collection's license, not the package's MIT.
+      files[`generated/${variant.subpath}/LICENSE`] = licenseText;
       const dir = `./generated/${variant.subpath}`;
       exports[`./${variant.subpath}`] = {
         types: `${dir}/index.d.ts`,
@@ -244,9 +251,7 @@ export async function buildOutput(
       variants,
       icons,
     } satisfies CatalogCollection);
-    files[`licenses/${collection.licenseFile}`] = source.license.endsWith('\n')
-      ? source.license
-      : `${source.license}\n`;
+    files[`licenses/${collection.licenseFile}`] = licenseText;
     provenance.push({
       id: collection.id,
       title: collection.title,
@@ -276,8 +281,9 @@ export async function buildOutput(
     `converted from their SVG files to JavaScript modules for Soundor and React\n` +
     `DOM. The conversion keeps each icon's geometry and changes its file format.\n` +
     `Each collection stays under its own license, whose full text is in\n` +
-    `\`licenses/\`; the MIT license in \`LICENSE\` covers Soundor Icons' own code\n` +
-    `(\`dist/\` and the generator), not the artwork.\n\n` +
+    `\`licenses/\`, and beside each subpath's modules as \`generated/<subpath>/LICENSE\`;\n` +
+    `the MIT license in \`LICENSE\` covers Soundor Icons' own code (\`dist/\` and\n` +
+    `the generator), not the artwork.\n\n` +
     `Exact versions, and the normalizations the conversion applied, are in\n` +
     `\`generated/provenance.json\`.\n\n` +
     notices.join('\n');

@@ -73,6 +73,8 @@ describe('buildOutput', () => {
     expect(Object.keys(files).sort()).toEqual([
       'THIRD_PARTY_NOTICES.md',
       'catalog/demo.json',
+      'generated/demo/LICENSE',
+      'generated/demo/filled/LICENSE',
       'generated/demo/filled/index.d.ts',
       'generated/demo/filled/nodes.js',
       'generated/demo/filled/soundor.js',
@@ -122,6 +124,11 @@ describe('buildOutput', () => {
     );
     expect(files['licenses/demo.txt']).toBe(
       'MIT License\n\nCopyright (c) Demo\n',
+    );
+    // And beside each variant's modules: the license nearest to them.
+    expect(files['generated/demo/LICENSE']).toBe(files['licenses/demo.txt']);
+    expect(files['generated/demo/filled/LICENSE']).toBe(
+      files['licenses/demo.txt'],
     );
   });
 
