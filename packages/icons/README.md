@@ -17,7 +17,7 @@ import { PlayerPlay } from '@soundor/icons/tabler';
 <Play size={24} color="#ffffff" />;
 ```
 
-It needs React 19.3, and `@soundor/react` 0.19 in a Soundor plugin.
+It needs React 19.3, and `@soundor/react` 0.21 in a Soundor plugin.
 
 - [Gallery](https://icons.soundor.dev): search and copy icons
 - [Documentation](https://icons.soundor.dev/docs)
