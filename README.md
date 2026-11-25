@@ -38,7 +38,7 @@ app, with pnpm or npm (Yarn and bun are not supported):
 pnpm add @soundor/icons
 ```
 
-It needs React 19.3, and `@soundor/react` 0.19 in a Soundor plugin.
+It needs React 19.3, and `@soundor/react` 0.21 in a Soundor plugin.
 
 ## Collections
 

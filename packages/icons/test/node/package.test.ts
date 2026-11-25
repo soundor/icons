@@ -146,7 +146,7 @@ describe('the package', () => {
     expect(manifest.type).toBe('module');
     expect(manifest.sideEffects).toBe(false);
     expect(manifest.peerDependencies).toEqual({
-      '@soundor/react': '^0.19.0',
+      '@soundor/react': '^0.21.0',
       react: '^19.3.0',
     });
     expect(manifest.peerDependenciesMeta['@soundor/react']?.optional).toBe(
